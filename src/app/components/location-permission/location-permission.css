@@ -28,6 +28,15 @@
   line-height: 1.5;
 }
 
+.location-status {
+  margin-top: 12px !important;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff1f2;
+  color: #991b1b !important;
+  font-weight: 800;
+}
+
 .actions {
   margin-top: 20px;
   display: flex;
@@ -51,4 +60,9 @@
 .primary {
   background: var(--unio-blue-dark);
   color: #ffffff;
+}
+
+.primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
 }

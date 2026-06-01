@@ -26,9 +26,14 @@
 }
 
 .pill {
+  position: relative;
   grid-template-columns: auto 1fr;
   gap: 10px;
   padding: 10px 16px;
+}
+
+.location-pill {
+  z-index: 3;
 }
 
 .pill span {
@@ -45,6 +50,34 @@
   background: transparent;
   font: inherit;
   color: var(--unio-blue-dark);
+}
+
+.location-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-soft);
+}
+
+.location-suggestions button {
+  border: 0;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-strong);
+  text-align: left;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.location-suggestions button:hover {
+  background: var(--surface-soft);
 }
 
 .category-row {
@@ -129,6 +162,8 @@
 }
 
 .listing-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 380px;
   overflow: hidden;
   border: 1px solid var(--unio-border);
   border-radius: 12px;
@@ -153,9 +188,10 @@
 
 .price-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .price {
@@ -169,6 +205,15 @@
   margin-left: 2px;
   color: var(--text-soft);
   font-size: 0.8rem;
+}
+
+.listing-status {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #e9f7ef;
+  color: #177245;
+  font-size: 0.72rem;
+  font-weight: 900;
 }
 
 .listing-content h2,
@@ -186,6 +231,11 @@
   line-height: 1.45;
 }
 
+.listing-content small {
+  color: var(--text-soft);
+  font-weight: 800;
+}
+
 .stars {
   display: inline-flex;
   gap: 3px;
@@ -194,6 +244,36 @@
 
 .stars span.filled {
   color: #f9b12c;
+}
+
+.empty-listings {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.empty-listings h2,
+.empty-listings p {
+  margin: 0;
+}
+
+.empty-listings h2 {
+  color: var(--text-strong);
+  font-size: 1.1rem;
+}
+
+.empty-listings p {
+  color: var(--text-soft);
+}
+
+.empty-listings a {
+  width: fit-content;
+  color: var(--unio-blue-dark);
+  font-weight: 900;
+  text-decoration: none;
 }
 
 @media (max-width: 1100px) {

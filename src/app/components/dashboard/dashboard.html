@@ -23,6 +23,14 @@
           <span>Admin Stats</span>
           <strong>Users: {{ totalUsers ?? '-' }} | Admins: {{ totalAdmins ?? '-' }}</strong>
         </div>
+        <div>
+          <span>Marketplace</span>
+          <strong>Listings: {{ totalProperties ?? '-' }} | Pending: {{ pendingProperties ?? '-' }}</strong>
+        </div>
+        <div>
+          <span>Bookings</span>
+          <strong>Confirmed: {{ confirmedBookings ?? '-' }} | Revenue: Rs {{ paidRevenue ?? '-' }}</strong>
+        </div>
       }
     </div>
 
@@ -36,9 +44,38 @@
 
     <div class="actions">
       <a routerLink="/quick-rent" class="link-btn">Browse rentals</a>
+      <a routerLink="/publish-property" class="link-btn">List a property</a>
       <button type="button" class="logout-btn" (click)="logout()">
         Logout
       </button>
     </div>
+
+    <section class="listing-section">
+      <div class="section-head">
+        <h2>My listed properties</h2>
+        <a routerLink="/publish-property">Add listing</a>
+      </div>
+
+      @if (listingError) {
+        <p class="error-msg">{{ listingError }}</p>
+      }
+
+      @if (myListings.length) {
+        <div class="listing-grid">
+          @for (listing of myListings; track listing.id) {
+            <a class="mini-listing" [routerLink]="['/rentals', listing.id]">
+              <img [src]="listing.image" [alt]="listing.title" loading="lazy" decoding="async" />
+              <span>
+                <strong>{{ listing.title }}</strong>
+                <small>{{ listing.location }} | Rs {{ listing.price }}</small>
+              </span>
+              <em>{{ listing.status || 'AVAILABLE' }}</em>
+            </a>
+          }
+        </div>
+      } @else {
+        <p class="empty-state">No properties listed from this account yet.</p>
+      }
+    </section>
   </article>
 </section>

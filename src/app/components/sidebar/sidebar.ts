@@ -9,3 +9,5 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./sidebar.css']
 })
 export class SidebarComponent {}
+
+export { SidebarComponent as Sidebar };

@@ -5,6 +5,31 @@
     <p>Track current stays, upcoming bookings and completed rentals in one place.</p>
   </div>
 
+  @if (bookings.length) {
+    <section class="orders-grid">
+      @for (booking of bookings; track booking.id) {
+        <article class="order-card">
+          <div class="status-row">
+            <h2>{{ booking.propertyTitle }}</h2>
+            <span class="status active">{{ booking.status }}</span>
+          </div>
+
+          <p>{{ booking.startDate }} - {{ booking.endDate }} | {{ booking.durationDays }} days</p>
+          <strong>Rs {{ booking.amount }} paid</strong>
+          <p>Invoice: {{ booking.invoiceNo }}</p>
+          <p>
+            Landlord: {{ booking.landlordContact.name }},
+            {{ booking.landlordContact.phone }}
+          </p>
+        </article>
+      }
+    </section>
+  }
+
+  @if (loadError) {
+    <p class="orders-note">{{ loadError }}</p>
+  }
+
   <section class="orders-grid">
     @for (order of orders; track order.title) {
       <article class="order-card">

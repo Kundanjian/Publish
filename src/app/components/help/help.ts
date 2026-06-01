@@ -12,3 +12,5 @@ import { helpTopics } from '../../data/market-data';
 export class HelpComponent {
   readonly topics = helpTopics;
 }
+
+export { HelpComponent as Help };

@@ -9,3 +9,5 @@ import { Component } from '@angular/core';
 export class UnioCoinsComponent {
   readonly coins = 250;
 }
+
+export { UnioCoinsComponent as UnioCoins };

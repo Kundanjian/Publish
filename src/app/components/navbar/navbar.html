@@ -1,4 +1,4 @@
-<header class="navbar">
+<header class="navbar" [class.navbar-hidden]="navbarHidden">
   <div class="nav-top">
     <div class="nav-left">
       <button type="button" class="menu-btn" aria-label="Open menu" (click)="toggleMenu()">
@@ -22,15 +22,35 @@
         </select>
       </label>
 
-      <label class="nav-filter">
+      <label class="nav-filter location-search">
         <span>Location</span>
-        <select>
-          <option>Jabalpur</option>
-          <option>Jabalpur, Madhya Pradesh</option>
-          <option>Madhya Pradesh</option>
-          <option>Use current location</option>
-        </select>
+        <input
+          type="search"
+          [ngModel]="locationQuery"
+          (ngModelChange)="onLocationInput($event)"
+          (focus)="locationPanelOpen = locationSuggestions.length > 0"
+          (keydown.enter)="searchSelectedLocation()"
+          placeholder="Type city or locality"
+          autocomplete="off"
+        />
+        @if (locationPanelOpen) {
+          <div class="location-suggestions">
+            @for (suggestion of locationSuggestions; track suggestion) {
+              <button type="button" (click)="chooseLocation(suggestion)">
+                {{ suggestion }}
+              </button>
+            }
+          </div>
+        }
       </label>
+
+      <button type="button" class="current-location-btn" [disabled]="isFetchingLocation" (click)="useCurrentLocation()">
+        {{ isFetchingLocation ? 'Fetching...' : 'Use current' }}
+      </button>
+
+      <button type="button" class="location-submit-btn" (click)="searchSelectedLocation()">
+        Find rentals
+      </button>
     </div>
 
     <div class="nav-right">
@@ -49,70 +69,84 @@
       <div class="auth-actions">
         @if (isLoggedIn()) {
           <a routerLink="/dashboard" class="ghost-btn" (click)="closeMenu()">Dashboard</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
           <button type="button" class="danger-btn" (click)="logout()">Logout</button>
         } @else {
           <a routerLink="/login" class="ghost-btn" (click)="closeMenu()">Log in</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
           <a routerLink="/signup" class="primary-btn" (click)="closeMenu()">Register</a>
         }
       </div>
     </div>
   </div>
 
-  <div class="booking-shell">
+  @if (isHomePage) {
+  <div class="booking-shell" [class.booking-shell-hidden]="bookingHidden">
     <p class="booking-note">Book your ideal rental stay directly from landlords.</p>
 
-    <div class="booking-bar" aria-label="Rental booking filters">
-      <label class="booking-field booking-field-location">
-        <span class="booking-label">City, property name or location</span>
-        <strong>Jabalpur</strong>
-        <small>Madhya Pradesh</small>
-      </label>
+    <div class="booking-scroll" aria-label="Rental booking filters">
+      <div class="booking-bar">
+        <label class="booking-field booking-field-location">
+          <span class="booking-label">City, property name or location</span>
+          <input
+            type="search"
+            [ngModel]="locationQuery"
+            (ngModelChange)="onLocationInput($event)"
+            (focus)="locationPanelOpen = locationSuggestions.length > 0"
+            (keydown.enter)="searchSelectedLocation()"
+            placeholder="Search location"
+            autocomplete="off"
+          />
+          <small>{{ selectedLocation }}</small>
+        </label>
 
-      <label class="booking-field">
-        <span class="booking-label">Guests</span>
-        <select>
-          <option>1 Adult</option>
-          <option>2 Adults</option>
-          <option>Family / Group</option>
-        </select>
-        <small>Add adults and children</small>
-      </label>
+        <label class="booking-field">
+          <span class="booking-label">Guests</span>
+          <select>
+            <option>1 Adult</option>
+            <option>2 Adults</option>
+            <option>Family / Group</option>
+          </select>
+          <small>Add adults and children</small>
+        </label>
 
-      <label class="booking-field">
-        <span class="booking-label">Move-In</span>
-        <select>
-          <option>Select date</option>
-          <option>This week</option>
-          <option>This month</option>
-        </select>
-        <small>Flexible start date</small>
-      </label>
+        <label class="booking-field">
+          <span class="booking-label">Move-In</span>
+          <select>
+            <option>Select date</option>
+            <option>This week</option>
+            <option>This month</option>
+          </select>
+          <small>Flexible start date</small>
+        </label>
 
-      <label class="booking-field">
-        <span class="booking-label">Stay Length</span>
-        <select>
-          <option>1-7 days</option>
-          <option>1-4 weeks</option>
-          <option>1-12 months</option>
-        </select>
-        <small>Short and long term</small>
-      </label>
+        <label class="booking-field">
+          <span class="booking-label">Stay Length</span>
+          <select>
+            <option>1-7 days</option>
+            <option>1-4 weeks</option>
+            <option>1-12 months</option>
+          </select>
+          <small>Short and long term</small>
+        </label>
 
-      <label class="booking-field">
-        <span class="booking-label">Budget</span>
-        <select>
-          <option>Rs 2,000 - Rs 6,000</option>
-          <option>Rs 6,000 - Rs 12,000</option>
-          <option>Rs 12,000+</option>
-        </select>
-        <small>Rent per stay cycle</small>
-      </label>
+        <label class="booking-field">
+          <span class="booking-label">Budget</span>
+          <select>
+            <option>Rs 2,000 - Rs 6,000</option>
+            <option>Rs 6,000 - Rs 12,000</option>
+            <option>Rs 12,000+</option>
+          </select>
+          <small>Rent per stay cycle</small>
+        </label>
+      </div>
     </div>
 
     <div class="booking-cta-wrap">
-      <a routerLink="/quick-rent" class="booking-cta" (click)="closeMenu()">Search</a>
+      <button type="button" class="booking-cta" (click)="searchSelectedLocation()">Search</button>
     </div>
   </div>
+  }
 </header>
 
 @if (menuOpen) {
@@ -133,6 +167,7 @@
         <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
       }
       <a routerLink="/quick-rent" (click)="closeMenu()">Accommodation</a>
+      <a routerLink="/publish-property" (click)="closeMenu()">List property</a>
       <a routerLink="/orders" (click)="closeMenu()">My Orders</a>
       <a routerLink="/settings" (click)="closeMenu()">Settings</a>
       @if (isLoggedIn()) {

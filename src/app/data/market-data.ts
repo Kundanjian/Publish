@@ -13,8 +13,27 @@ export type RentalListing = {
   summary: string;
   location: string;
   image: string;
+  images?: string[];
   rating: number;
   badge?: string;
+  weeklyPrice?: number;
+  status?: 'AVAILABLE' | 'BOOKED' | 'PENDING_APPROVAL';
+  availableFrom?: string;
+  amenities?: string[];
+  rules?: string[];
+  bookedRanges?: Array<{ from: string; to: string; bookingId: string }>;
+  landlordContact?: {
+    name: string;
+    phone: string;
+    email: string;
+  };
+  specifications?: string[];
+  addOns?: Array<{ name: string; charge: number; image?: string }>;
+  nearbyLandmark?: string;
+  landmarkDistance?: string;
+  foodAvailable?: boolean;
+  foodOptions?: string[];
+  entryRule?: string;
 };
 
 export type OrderItem = {

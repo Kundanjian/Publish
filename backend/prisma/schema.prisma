@@ -9,7 +9,29 @@ datasource db {
 
 enum UserRole {
   USER
+  LANDLORD
   ADMIN
+}
+
+enum PropertyStatus {
+  PENDING_APPROVAL
+  AVAILABLE
+  BOOKED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
 
 model User {
@@ -21,6 +43,8 @@ model User {
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  properties      Property[] @relation("LandlordProperties")
+  bookings        Booking[]  @relation("TenantBookings")
 }
 
 model RegistrationOtp {
@@ -34,4 +58,95 @@ model RegistrationOtp {
   createdAt    DateTime @default(now())
 
   @@index([email])
+}
+
+model Property {
+  id             String          @id @default(cuid())
+  landlordId     String
+  landlord       User            @relation("LandlordProperties", fields: [landlordId], references: [id])
+  title          String
+  propertyType   String
+  location       String
+  address        String?
+  summary        String
+  monthlyPrice   Int
+  weeklyPrice    Int
+  dailyPrice     Int
+  status         PropertyStatus  @default(PENDING_APPROVAL)
+  availableFrom  DateTime?
+  ownerPhone     String
+  ownerEmail     String
+  amenities      PropertyAmenity[]
+  rules          PropertyRule[]
+  photos         PropertyPhoto[]
+  bookings       Booking[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([location])
+  @@index([status])
+}
+
+model PropertyPhoto {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  url        String
+  sortOrder  Int      @default(0)
+}
+
+model PropertyAmenity {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  label      String
+}
+
+model PropertyRule {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  label      String
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  propertyId    String
+  property      Property      @relation(fields: [propertyId], references: [id])
+  tenantId      String
+  tenant        User          @relation("TenantBookings", fields: [tenantId], references: [id])
+  startDate     DateTime
+  endDate       DateTime
+  durationDays  Int
+  amount        Int
+  status        BookingStatus @default(PENDING_PAYMENT)
+  payment       Payment?
+  invoice       Invoice?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([propertyId, startDate, endDate])
+  @@index([tenantId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  bookingId          String        @unique
+  booking            Booking       @relation(fields: [bookingId], references: [id])
+  provider           String
+  providerPaymentId  String?
+  amount             Int
+  status             PaymentStatus @default(PENDING)
+  paidAt             DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  invoiceNo String   @unique
+  total     Int
+  issuedAt  DateTime @default(now())
 }

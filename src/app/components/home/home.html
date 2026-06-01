@@ -16,6 +16,7 @@
 
       <div class="hero-actions">
         <a class="primary-action" routerLink="/quick-rent">Explore rentals</a>
+        <a class="primary-action secondary-action" routerLink="/publish-property">List your property</a>
       </div>
     </div>
 
@@ -33,7 +34,7 @@
         <label class="field-card">
           <span>location</span>
           <select>
-            <option>India</option>
+            <option>{{ selectedLocation() }}</option>
             @for (location of locationSuggestions; track location) {
               <option>{{ location }}</option>
             }
@@ -45,7 +46,7 @@
         @for (filter of quickFilters; track filter.label) {
           <article class="category-card">
             <span class="category-icon">
-              <img [src]="filter.icon" [alt]="filter.label" />
+              <img [src]="filter.icon" [alt]="filter.label" loading="lazy" decoding="async" />
             </span>
             <span>{{ filter.label }}</span>
           </article>
@@ -54,22 +55,23 @@
 
       <label class="search-bar">
         <span class="sr-only">Search</span>
-        <input type="text" value="Find hostels, flats, apartments, villas..." />
-        <button type="button" aria-label="Search">Go</button>
+        <input type="text" [value]="'Find rentals near ' + selectedCity()" readonly />
+        <a routerLink="/quick-rent" [queryParams]="{ location: selectedLocation() }" aria-label="Search">Go</a>
       </label>
     </div>
   </section>
 
-  <div class="breadcrumbs">Home/Rentals/Accommodation in Jabalpur Madhya Pradesh</div>
+  <div class="breadcrumbs">Home/Rentals/Accommodation in {{ selectedLocation() }}</div>
 
+  @if (listings.length) {
   <section class="listing-grid">
-    @for (listing of listings; track listing.title) {
+    @for (listing of listings; track listing.id) {
       <a class="listing-card" [routerLink]="['/rentals', listing.id]">
         <div class="image-wrap">
           @if (listing.badge) {
             <span class="badge">{{ listing.badge }}</span>
           }
-          <img [src]="listing.image" [alt]="listing.title" />
+          <img [src]="listing.image" [alt]="listing.title" loading="lazy" decoding="async" />
         </div>
 
         <div class="listing-content">
@@ -88,11 +90,18 @@
       </a>
     }
   </section>
+  } @else {
+    <section class="empty-listings">
+      <h2>No exact listings found for {{ selectedLocation() }}</h2>
+      <p>Try a nearby locality or list a property in this area to make it visible on Unio.</p>
+      <a routerLink="/publish-property">List your property</a>
+    </section>
+  }
 
   <section class="discovery-grid">
     @for (tile of discoveryTiles; track tile.title) {
       <article class="discovery-card">
-        <img [src]="tile.image" [alt]="tile.title" />
+        <img [src]="tile.image" [alt]="tile.title" loading="lazy" decoding="async" />
         <div class="discovery-overlay">{{ tile.title }}</div>
       </article>
     }

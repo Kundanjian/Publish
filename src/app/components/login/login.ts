@@ -19,6 +19,7 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+  warningMessage = '';
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -33,6 +34,7 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMessage = '';
+    this.warningMessage = '';
 
     this.authApi
       .loginUser(this.loginForm.getRawValue())
@@ -43,7 +45,8 @@ export class LoginComponent {
         })
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
+          this.warningMessage = response.databaseWarning ?? '';
           this.router.navigate(['/dashboard']);
         },
         error: (error: unknown) => {

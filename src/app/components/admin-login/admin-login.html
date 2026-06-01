@@ -8,19 +8,19 @@
     <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submit()">
       <label>
         <span>Email</span>
-        <input type="email" placeholder="Enter admin email" formControlName="email" />
+        <input type="email" placeholder="Enter admin email" formControlName="email" autocomplete="username" />
       </label>
 
       <label>
         <span>Password</span>
-        <input type="password" placeholder="Enter password" formControlName="password" />
+        <input type="password" placeholder="Enter password" formControlName="password" autocomplete="current-password" />
       </label>
 
       @if (errorMessage) {
         <p class="error-msg">{{ errorMessage }}</p>
       }
 
-      <button type="submit" class="cta" [disabled]="loading">
+      <button type="submit" class="cta" [class.ready-btn]="loginForm.valid" [disabled]="loading">
         {{ loading ? 'Logging in...' : 'Login as admin' }}
       </button>
     </form>

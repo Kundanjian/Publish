@@ -8,22 +8,22 @@
     <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="requestOtp()">
       <label>
         <span>Name</span>
-        <input type="text" placeholder="Enter full name" formControlName="name" />
+        <input type="text" placeholder="Enter full name" formControlName="name" autocomplete="name" />
       </label>
 
       <label>
         <span>Email</span>
-        <input type="email" placeholder="Enter email" formControlName="email" />
+        <input type="email" placeholder="Enter email" formControlName="email" autocomplete="email" />
       </label>
 
       <label>
         <span>Password</span>
-        <input type="password" placeholder="Create password" formControlName="password" />
+        <input type="password" placeholder="Create password" formControlName="password" autocomplete="new-password" />
       </label>
 
       <label>
         <span>Confirm Password</span>
-        <input type="password" placeholder="Confirm password" formControlName="confirmPassword" />
+        <input type="password" placeholder="Confirm password" formControlName="confirmPassword" autocomplete="new-password" />
       </label>
 
       @if (errorMessage) {
@@ -34,7 +34,7 @@
         <p class="auth-message success">{{ successMessage }}</p>
       }
 
-      <button type="submit" class="cta" [disabled]="loading">
+      <button type="submit" class="cta" [class.ready-btn]="registerForm.valid" [disabled]="loading">
         {{ loading ? 'Sending OTP...' : otpSent ? 'Resend OTP' : 'Send OTP' }}
       </button>
     </form>
@@ -43,10 +43,10 @@
       <form class="otp-form" [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
         <label>
           <span>OTP</span>
-          <input type="text" maxlength="6" placeholder="Enter 6-digit OTP" formControlName="otp" />
+          <input type="text" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit OTP" formControlName="otp" autocomplete="one-time-code" />
         </label>
 
-        <button type="submit" class="cta verify-btn" [disabled]="loading">
+        <button type="submit" class="cta verify-btn" [class.ready-btn]="otpForm.valid" [disabled]="loading">
           {{ loading ? 'Verifying...' : 'Verify OTP & Create Account' }}
         </button>
       </form>

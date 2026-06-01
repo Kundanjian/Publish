@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 
@@ -30,6 +30,7 @@ export type LoginPayload = {
 
 type AuthResponse = {
   message: string;
+  databaseWarning?: string;
   accessToken: string;
   user: AuthUser;
 };
@@ -49,6 +50,10 @@ export type AdminDashboardResponse = {
   stats: {
     totalUsers: number;
     totalAdmins: number;
+    totalProperties?: number;
+    pendingProperties?: number;
+    confirmedBookings?: number;
+    paidRevenue?: number;
   };
 };
 
@@ -97,7 +102,7 @@ export class AuthApiService {
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return sessionStorage.getItem(this.tokenKey) || localStorage.getItem(this.tokenKey);
   }
 
   getAuthHeaders(): HttpHeaders {
@@ -118,8 +123,18 @@ export class AuthApiService {
         localStorage.setItem(this.userKey, JSON.stringify(user));
         this.currentUserSignal.set(user);
       }),
-      catchError(() => {
-        this.logout();
+      catchError((error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.logout();
+          return of(null);
+        }
+
+        const cachedUser = this.readUserFromStorage();
+        if (cachedUser && token) {
+          this.currentUserSignal.set(cachedUser);
+          return of(cachedUser);
+        }
+
         return of(null);
       })
     );
@@ -132,19 +147,23 @@ export class AuthApiService {
   }
 
   logout(): void {
+    sessionStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem(this.userKey);
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     this.currentUserSignal.set(null);
   }
 
   private setSession(response: AuthResponse): void {
-    localStorage.setItem(this.tokenKey, response.accessToken);
-    localStorage.setItem(this.userKey, JSON.stringify(response.user));
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    sessionStorage.setItem(this.tokenKey, response.accessToken);
+    sessionStorage.setItem(this.userKey, JSON.stringify(response.user));
     this.currentUserSignal.set(response.user);
   }
 
   private readUserFromStorage(): AuthUser | null {
-    const rawUser = localStorage.getItem(this.userKey);
+    const rawUser = sessionStorage.getItem(this.userKey) || localStorage.getItem(this.userKey);
     if (!rawUser) {
       return null;
     }
@@ -152,6 +171,7 @@ export class AuthApiService {
     try {
       return JSON.parse(rawUser) as AuthUser;
     } catch {
+      sessionStorage.removeItem(this.userKey);
       localStorage.removeItem(this.userKey);
       return null;
     }

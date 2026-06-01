@@ -12,3 +12,5 @@ import { settingGroups } from '../../data/market-data';
 export class SettingsComponent {
   readonly settings = settingGroups;
 }
+
+export { SettingsComponent as Settings };

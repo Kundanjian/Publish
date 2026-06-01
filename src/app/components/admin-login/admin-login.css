@@ -86,6 +86,10 @@
   cursor: pointer;
 }
 
+.cta.ready-btn {
+  background: linear-gradient(90deg, var(--unio-blue-dark), var(--unio-blue));
+}
+
 .cta:disabled {
   cursor: progress;
   opacity: 0.75;

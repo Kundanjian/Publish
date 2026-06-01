@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { LocationSearchService } from '../../core/services/location-search.service';
 import { PropertyApiService } from '../../core/services/property-api.service';
 import {
   discoveryTiles,
@@ -16,28 +17,44 @@ import {
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css']
+  styleUrls: ['./home.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   private readonly propertyApi = inject(PropertyApiService);
+  private readonly locationSearch = inject(LocationSearchService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   readonly durationOptions = durationOptions;
   readonly locationSuggestions = locationSuggestions;
   readonly quickFilters = quickFilters;
   listings = rentalListings;
   readonly discoveryTiles = discoveryTiles;
   readonly platformHighlights = platformHighlights;
+  readonly selectedLocation = this.locationSearch.selectedLocation;
+  readonly selectedCity = this.locationSearch.selectedCity;
+  private readonly starCache = new Map<number, boolean[]>();
 
-  ngOnInit(): void {
-    this.propertyApi.getProperties().subscribe({
+  private readonly listingsEffect = effect((onCleanup) => {
+    const location = this.selectedLocation();
+    const subscription = this.propertyApi.getProperties(location).subscribe({
       next: (properties) => {
-        if (properties.length) {
-          this.listings = properties.slice(0, 8);
-        }
+        this.listings = properties.slice(0, 8);
+        this.changeDetector.markForCheck();
       }
     });
-  }
+    onCleanup(() => subscription.unsubscribe());
+  });
 
   stars(rating: number): boolean[] {
-    return Array.from({ length: 5 }, (_, index) => index < rating);
+    if (!this.starCache.has(rating)) {
+      this.starCache.set(
+        rating,
+        Array.from({ length: 5 }, (_, index) => index < rating)
+      );
+    }
+
+    return this.starCache.get(rating) ?? [];
   }
 }
+
+export { HomeComponent as Home };

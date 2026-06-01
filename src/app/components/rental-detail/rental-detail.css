@@ -72,7 +72,8 @@
   gap: 12px;
 }
 
-.gallery-actions button {
+.gallery-actions button,
+.gallery-actions a {
   border: 0;
   border-radius: 12px;
   padding: 14px 18px;
@@ -81,6 +82,8 @@
   font-weight: 800;
   letter-spacing: 0.04em;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
 }
 
 .summary-card {
@@ -137,10 +140,26 @@
 }
 
 .day-price,
+.week-price,
 .month-price {
   margin-top: 14px;
   color: var(--text-strong);
   font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.week-price {
+  color: #1f78be;
+}
+
+.availability-chip {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #e9f7ef;
+  color: #177245;
   font-weight: 800;
 }
 
@@ -168,6 +187,118 @@
   margin-top: 26px;
   padding: 24px;
   background: var(--surface-accent);
+}
+
+.checkout-panel {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1fr);
+  gap: 24px;
+  margin-top: 26px;
+  padding: 24px;
+  border: 2px solid #98c8f0;
+  border-radius: 24px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-soft);
+}
+
+.checkout-panel h2,
+.checkout-panel p {
+  margin: 0;
+}
+
+.checkout-panel h2 {
+  margin-top: 8px;
+  color: var(--text-strong);
+  font-size: 1.8rem;
+}
+
+.checkout-panel p {
+  margin-top: 12px;
+  color: var(--unio-text);
+  line-height: 1.5;
+}
+
+.checkout-form {
+  display: grid;
+  gap: 14px;
+}
+
+.checkout-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--text-soft);
+  font-weight: 800;
+}
+
+.checkout-form input {
+  width: 100%;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text-strong);
+  font: inherit;
+}
+
+.checkout-form input.field-invalid {
+  border-color: #dc2626;
+  background: #fff1f2;
+  color: #7f1d1d;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
+}
+
+.checkout-form input.field-invalid:focus {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+.price-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface-soft);
+  color: var(--text-strong);
+}
+
+.price-summary strong {
+  font-size: 1.4rem;
+}
+
+.checkout-form button {
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  background: var(--text-strong);
+  color: var(--text-contrast);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.checkout-form button.ready-btn {
+  background: linear-gradient(90deg, var(--unio-blue-dark), var(--unio-blue));
+}
+
+.checkout-form button:disabled {
+  opacity: 0.68;
+  cursor: progress;
+}
+
+.checkout-error,
+.booking-success {
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.checkout-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.booking-success {
+  background: #e9f7ef;
+  color: #145c36;
 }
 
 .details-table h3 {
@@ -274,7 +405,8 @@
 @media (max-width: 720px) {
   .detail-layout,
   .spec-grid,
-  .related-grid {
+  .related-grid,
+  .checkout-panel {
     grid-template-columns: 1fr;
   }
 }
