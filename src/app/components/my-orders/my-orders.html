@@ -1,10 +1,11 @@
 <section class="page-shell">
   <div class="page-head">
-    <p class="eyebrow">Rental history</p>
+    <p class="eyebrow">Rental utilities</p>
     <h1>My Orders</h1>
-    <p>Track current stays, upcoming bookings and completed rentals in one place.</p>
+    <p>Track history, requests and enquiries with role-based view.</p>
   </div>
 
+<<<<<<< HEAD
   @if (bookings.length) {
     <section class="orders-grid">
       @for (booking of bookings; track booking.id) {
@@ -39,9 +40,48 @@
             {{ order.status }}
           </span>
         </div>
+=======
+  <div class="mode-toggle" role="tablist" aria-label="Order role mode">
+    @for (option of modeOptions; track option.key) {
+      <button
+        type="button"
+        role="tab"
+        class="toggle-btn"
+        [class.active]="activeMode === option.key"
+        [attr.aria-selected]="activeMode === option.key"
+        (click)="switchMode(option.key)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
-        <p>{{ order.duration }}</p>
-        <strong>{{ order.amount }}</strong>
+  @if (errorMessage) {
+    <p class="state-message error">{{ errorMessage }}</p>
+  }
+
+  @if (loading) {
+    <p class="state-message loading">Loading utilities...</p>
+  }
+
+  <section class="orders-grid">
+    @for (section of sections; track section.key) {
+      <article class="order-card">
+        <h2>{{ section.title }}</h2>
+
+        <div class="order-items">
+          @for (item of section.items; track item.id) {
+            <div class="order-item">
+              <div class="item-head">
+                <h3>{{ item.title }}</h3>
+                <span class="status">{{ item.status }}</span>
+              </div>
+              <p>{{ item.subtitle }}</p>
+              <small>{{ item.updatedAt }}</small>
+            </div>
+          }
+        </div>
       </article>
     }
   </section>

@@ -19,16 +19,21 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+<<<<<<< HEAD
   warningMessage = '';
+=======
+  showPassword = false;
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
   readonly loginForm = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    identifier: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required]]
   });
 
   login(): void {
     if (this.loginForm.invalid || this.loading) {
       this.loginForm.markAllAsTouched();
+      this.errorMessage = 'Please enter email/mobile and password.';
       return;
     }
 
@@ -39,7 +44,7 @@ export class LoginComponent {
     this.authApi
       .loginUser(this.loginForm.getRawValue())
       .pipe(
-        timeout(15000),
+        timeout(7000),
         finalize(() => {
           this.loading = false;
         })
@@ -63,6 +68,10 @@ export class LoginComponent {
       return error.error?.message ?? fallback;
     }
 
-    return 'Request timed out. Please try again.';
+    return 'Request timed out quickly. Please try again.';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

@@ -84,6 +84,7 @@
   <div class="booking-shell" [class.booking-shell-hidden]="bookingHidden">
     <p class="booking-note">Book your ideal rental stay directly from landlords.</p>
 
+<<<<<<< HEAD
     <div class="booking-scroll" aria-label="Rental booking filters">
       <div class="booking-bar">
         <label class="booking-field booking-field-location">
@@ -98,6 +99,14 @@
             autocomplete="off"
           />
           <small>{{ selectedLocation }}</small>
+=======
+    <div class="booking-scroll" aria-label="Scrollable booking filters">
+      <div class="booking-bar" aria-label="Rental booking filters">
+        <label class="booking-field booking-field-location">
+          <span class="booking-label">City, property name or location</span>
+          <strong>Jabalpur</strong>
+          <small>Madhya Pradesh</small>
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
         </label>
 
         <label class="booking-field">
@@ -156,19 +165,38 @@
     <div class="drawer-head">
       <div class="avatar">{{ userInitial() }}</div>
       <div>
-        <h2>{{ currentUser()?.name || 'Guest' }}</h2>
-        <p>{{ currentUser()?.role || 'Flexible rental seeker' }}</p>
+        <h2>Guest: {{ userName() }}</h2>
+        <p>Mobile or Mail: {{ userContact() }}</p>
       </div>
     </div>
 
     <nav class="drawer-links">
+<<<<<<< HEAD
       <a routerLink="/" (click)="closeMenu()">Home</a>
       @if (isLoggedIn()) {
         <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
       }
       <a routerLink="/quick-rent" (click)="closeMenu()">Accommodation</a>
       <a routerLink="/publish-property" (click)="closeMenu()">List property</a>
+=======
+      <a routerLink="/coins" (click)="closeMenu()">
+        Unio Coins
+        <span class="coin-pill">{{ userCoins() }}</span>
+      </a>
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
       <a routerLink="/orders" (click)="closeMenu()">My Orders</a>
+      <button type="button" class="drawer-install" (click)="installMobileApp()">
+        @if (installingApp) {
+          Installing...
+        } @else if (isPwaInstalled()) {
+          Unio App Installed
+        } @else if (canInstallPwa()) {
+          Install Unio Mobile App
+        } @else {
+          Install Unio Mobile App
+        }
+      </button>
+      <a routerLink="/help" (click)="closeMenu()">Help</a>
       <a routerLink="/settings" (click)="closeMenu()">Settings</a>
       @if (isLoggedIn()) {
         <button type="button" class="drawer-logout" (click)="logout()">Log out</button>

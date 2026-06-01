@@ -25,6 +25,7 @@ async function main() {
     update: {
       name,
       passwordHash,
+      unioCoins: 1000,
       role: UserRole.ADMIN,
       emailVerifiedAt: new Date()
     },
@@ -32,6 +33,7 @@ async function main() {
       name,
       email,
       passwordHash,
+      unioCoins: 1000,
       role: UserRole.ADMIN,
       emailVerifiedAt: new Date()
     }

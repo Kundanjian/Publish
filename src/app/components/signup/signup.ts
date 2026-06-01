@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { finalize, timeout } from 'rxjs';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { PASSWORD_POLICY_HINT, strongPasswordValidator } from '../../core/utils/password-policy';
 
 @Component({
   selector: 'app-signup',
@@ -22,12 +23,16 @@ export class SignupComponent {
   loading = false;
   errorMessage = '';
   successMessage = '';
+  showPassword = false;
+  showConfirmPassword = false;
+  readonly passwordPolicyHint = PASSWORD_POLICY_HINT;
 
   readonly registerForm = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
+    phone: ['', [Validators.pattern(/^[\d+\-\s()]{8,20}$/)]],
+    password: ['', [Validators.required, Validators.minLength(8), strongPasswordValidator()]],
+    confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
   });
 
   readonly otpForm = this.formBuilder.nonNullable.group({
@@ -37,10 +42,16 @@ export class SignupComponent {
   requestOtp(): void {
     if (this.registerForm.invalid || this.loading) {
       this.registerForm.markAllAsTouched();
+      this.errorMessage = this.validationMessage();
+      this.successMessage = '';
       return;
     }
 
     const values = this.registerForm.getRawValue();
+    const payload = {
+      ...values,
+      phone: values.phone.trim() ? values.phone.trim() : undefined
+    };
     if (values.password !== values.confirmPassword) {
       this.errorMessage = 'Password and confirm password must match.';
       this.successMessage = '';
@@ -53,9 +64,9 @@ export class SignupComponent {
     this.successMessage = '';
 
     this.authApi
-      .requestRegistrationOtp(values)
+      .requestRegistrationOtp(payload)
       .pipe(
-        timeout(15000),
+        timeout(8000),
         finalize(() => {
           this.loading = false;
         })
@@ -86,7 +97,7 @@ export class SignupComponent {
         otp: this.otpForm.getRawValue().otp
       })
       .pipe(
-        timeout(15000),
+        timeout(8000),
         finalize(() => {
           this.loading = false;
         })
@@ -106,9 +117,49 @@ export class SignupComponent {
       if (error.status === 0) {
         return 'Backend service is not reachable. Please ensure backend is running on port 5003.';
       }
+
       return error.error?.message ?? fallback;
     }
 
-    return 'Request timed out. Please try again.';
+    return 'Request timed out quickly. Please try again.';
+  }
+
+  togglePasswordVisibility(field: 'confirm' | 'main'): void {
+    if (field === 'main') {
+      this.showPassword = !this.showPassword;
+      return;
+    }
+
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  private validationMessage(): string {
+    const controls = this.registerForm.controls;
+
+    if (controls.name.hasError('required') || controls.email.hasError('required')) {
+      return 'Name and email are required.';
+    }
+
+    if (controls.email.hasError('email')) {
+      return 'Please enter a valid email address.';
+    }
+
+    if (controls.phone.hasError('pattern')) {
+      return 'Please enter a valid mobile number (8-20 digits).';
+    }
+
+    if (controls.password.hasError('required')) {
+      return 'Password is required.';
+    }
+
+    if (controls.password.hasError('weakPassword') || controls.password.hasError('minlength')) {
+      return this.passwordPolicyHint;
+    }
+
+    if (controls.confirmPassword.hasError('required')) {
+      return 'Confirm password is required.';
+    }
+
+    return 'Please check the highlighted fields.';
   }
 }

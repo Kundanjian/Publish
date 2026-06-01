@@ -8,12 +8,15 @@ export type AuthUser = {
   id: string;
   name: string;
   email: string;
+  phone?: string | null;
+  unioCoins?: number;
   role: UserRole;
 };
 
 export type RequestOtpPayload = {
   name: string;
   email: string;
+  phone?: string;
   password: string;
   confirmPassword: string;
 };
@@ -24,8 +27,36 @@ export type VerifyOtpPayload = {
 };
 
 export type LoginPayload = {
-  email: string;
+  identifier: string;
   password: string;
+};
+
+export type UpdateProfilePayload = {
+  email?: string;
+  name?: string;
+  phone?: string;
+};
+
+export type UpdatePasswordPayload = {
+  confirmNewPassword: string;
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type OrderUtilityMode = 'LANDLORD' | 'RENTEE';
+
+export type OrderUtilityItem = {
+  id: string;
+  status: string;
+  subtitle: string;
+  title: string;
+  updatedAt: string;
+};
+
+export type OrderUtilitySection = {
+  items: OrderUtilityItem[];
+  key: 'enquiries' | 'history' | 'requests';
+  title: string;
 };
 
 type AuthResponse = {
@@ -37,6 +68,20 @@ type AuthResponse = {
 
 type AuthProfileResponse = {
   user: AuthUser;
+};
+
+type UpdateProfileResponse = {
+  message: string;
+  user: AuthUser | null;
+};
+
+type MobileAppMetaResponse = {
+  installUrl: string;
+};
+
+export type OrderUtilitiesResponse = {
+  mode: OrderUtilityMode;
+  sections: OrderUtilitySection[];
 };
 
 export type UserDashboardResponse = {
@@ -146,6 +191,41 @@ export class AuthApiService {
     return this.http.get<DashboardResponse>(endpoint, { headers: this.getAuthHeaders() });
   }
 
+  updateProfile(payload: UpdateProfilePayload): Observable<UpdateProfileResponse> {
+    return this.http
+      .patch<UpdateProfileResponse>('/api/user/profile', payload, {
+        headers: this.getAuthHeaders()
+      })
+      .pipe(
+        tap((response) => {
+          if (response.user) {
+            this.persistUser(response.user);
+          }
+        })
+      );
+  }
+
+  updatePassword(payload: UpdatePasswordPayload): Observable<{ message: string }> {
+    return this.http.patch<{ message: string }>('/api/user/password', payload, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getOrderUtilities(mode: OrderUtilityMode): Observable<OrderUtilitiesResponse> {
+    return this.http.get<OrderUtilitiesResponse>(`/api/user/orders?mode=${mode}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getMobileAppInstallUrl(): Observable<string> {
+    return this.http.get<MobileAppMetaResponse>('/api/meta/mobile-app').pipe(
+      map((response) => response.installUrl),
+      catchError(() =>
+        of('https://play.google.com/store/apps/details?id=com.unio.mobile')
+      )
+    );
+  }
+
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
     sessionStorage.removeItem(this.userKey);
@@ -155,11 +235,21 @@ export class AuthApiService {
   }
 
   private setSession(response: AuthResponse): void {
+<<<<<<< HEAD
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     sessionStorage.setItem(this.tokenKey, response.accessToken);
     sessionStorage.setItem(this.userKey, JSON.stringify(response.user));
     this.currentUserSignal.set(response.user);
+=======
+    localStorage.setItem(this.tokenKey, response.accessToken);
+    this.persistUser(response.user);
+  }
+
+  private persistUser(user: AuthUser): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.currentUserSignal.set(user);
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 
   private readUserFromStorage(): AuthUser | null {

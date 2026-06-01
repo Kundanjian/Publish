@@ -271,7 +271,10 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 4px;
+<<<<<<< HEAD
   scrollbar-gutter: stable;
+=======
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 }
 
 .booking-scroll::-webkit-scrollbar {
@@ -279,6 +282,7 @@
 }
 
 .booking-scroll::-webkit-scrollbar-track {
+<<<<<<< HEAD
   background: transparent;
 }
 
@@ -291,6 +295,22 @@
   display: flex;
   width: max-content;
   min-width: 100%;
+=======
+  background: color-mix(in srgb, var(--surface-soft) 70%, transparent);
+  border-radius: 999px;
+}
+
+.booking-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--unio-blue) 55%, var(--surface-soft));
+  border-radius: 999px;
+}
+
+.booking-bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.25fr) repeat(4, minmax(140px, 1fr));
+  width: max-content;
+  min-width: 1160px;
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   overflow: hidden;
   border-radius: 18px;
   background: var(--surface-raised);
@@ -439,12 +459,37 @@
 }
 
 .drawer-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px 2px;
   border-bottom: 1px solid var(--border-soft);
   color: var(--unio-blue-dark);
   text-decoration: none;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.drawer-install {
+  text-align: left;
+  padding: 12px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  background: transparent;
+  color: var(--unio-blue-dark);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coin-pill {
+  margin-left: 8px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #0f4f82;
+  background: color-mix(in srgb, #8fd6ff 45%, var(--surface-soft));
 }
 
 .drawer-logout {
@@ -468,10 +513,13 @@
   .nav-right {
     justify-content: space-between;
   }
+<<<<<<< HEAD
 
   .booking-bar {
     min-width: max-content;
   }
+=======
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 }
 
 @media (max-width: 760px) {
@@ -495,6 +543,7 @@
     justify-content: center;
   }
 
+<<<<<<< HEAD
   .location-search,
   .current-location-btn,
   .location-submit-btn {
@@ -514,6 +563,8 @@
     min-width: 245px;
   }
 
+=======
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   .booking-cta {
     min-width: min(220px, 100%);
   }

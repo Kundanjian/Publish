@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
+<<<<<<< HEAD
   {
     path: '',
     loadComponent: () => import('./components/home/home').then((m) => m.HomeComponent),
@@ -175,5 +177,19 @@ export const routes: Routes = [
       schemaType: 'TermsOfService'
     }
   },
+=======
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'admin-login', component: AdminLoginComponent, canActivate: [guestGuard] },
+  { path: 'signup', component: SignupComponent, canActivate: [guestGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'quick-rent', component: QuickRentComponent },
+  { path: 'accessories', component: AccessoriesComponent },
+  { path: 'rentals/:id', component: RentalDetailComponent },
+  { path: 'orders', component: MyOrdersComponent, canActivate: [authGuard] },
+  { path: 'coins', component: UnioCoinsComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+  { path: 'help', component: HelpComponent },
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   { path: '**', redirectTo: '' }
 ];

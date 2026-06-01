@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, timeout } from 'rxjs';
 import {
   AdminDashboardResponse,
   AuthApiService,
@@ -51,6 +51,7 @@ export class DashboardComponent implements OnInit {
     this.authService
       .getDashboardData()
       .pipe(
+        timeout(7000),
         finalize(() => {
           this.isFetchingDashboard = false;
         })
@@ -76,7 +77,7 @@ export class DashboardComponent implements OnInit {
         },
         error: () => {
           this.authService.logout();
-          this.errorMessage = 'Session expired. Please login again.';
+          this.errorMessage = 'Session expired or timed out. Please login again.';
           this.router.navigate(['/login']);
         }
       });

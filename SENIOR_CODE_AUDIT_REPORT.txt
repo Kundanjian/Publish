@@ -1,0 +1,121 @@
+Senior Code Audit & Rework Report
+Project: unio_codex
+Date: 2026-04-18
+Reviewer: Codex (senior dev pass)
+
+Scope
+- Navigation UX gaps from screenshots
+- Login/register performance and validation behavior
+- Backend auth clarity and security validation
+- Settings and order utilities completeness
+- PWA readiness and install workflow
+
+Findings Resolved
+1. Booking filter bar was not horizontally scroll-friendly.
+2. Login/register password fields lacked visibility toggle.
+3. Dashboard exposed role card not needed in user-facing summary.
+4. PWA install path was external-link-only; no install prompt support.
+5. Login/register error feedback was delayed due long request windows and SMTP latency.
+6. Password policy was weak and inconsistent between frontend/backend.
+7. Duplicate registration errors were generic (email/mobile conflict not clearly distinguished).
+8. Settings page had placeholder utilities without real backend actions.
+9. My Orders utilities from design (History/Requests/Enquiries + role toggle) were missing and not backend-linked.
+
+Implemented Changes
+
+Frontend
+- Navbar/booking:
+  - Made booking filter section horizontally scrollable (`booking-scroll`) to match screenshot behavior.
+- Auth UX:
+  - Added eye icon visibility toggles on login and signup password fields (also admin login for consistency).
+  - Reduced auth request timeout windows for faster user feedback.
+  - Improved client-side validation messages before API submit.
+- Dashboard:
+  - Removed Role card from dashboard UI.
+  - Added timeout guard to dashboard fetch to avoid long-loading state.
+- PWA:
+  - Added manifest, icons, service worker config and registration.
+  - Added `PwaInstallService` to handle `beforeinstallprompt` and app install state.
+  - Wired drawer “Install Unio Mobile App” button to trigger install prompt first, fallback to mobile app URL.
+- Settings:
+  - Rebuilt settings page into actionable utilities:
+    - Change Profile (overview)
+    - Change Password
+    - Change Name, Email, Number
+  - Connected forms to backend APIs with success/error handling.
+- My Orders:
+  - Added top toggle (`As Landlord` / `As Rentee`) and utility cards:
+    - History
+    - Requests
+    - Enquiries
+  - Connected to backend utility endpoint.
+
+Backend
+- Auth validation:
+  - Added strong password policy enforcement.
+  - Added explicit, user-friendly auth errors:
+    - Wrong password.
+    - Email is not registered.
+    - Email already registered.
+    - Mobile already registered.
+- Registration:
+  - Distinct duplicate checks for email and mobile during OTP request and verify.
+  - Added fail-fast OTP delivery behavior with clearer 503 message when mail delivery fails.
+- Security/usability:
+  - Added password policy helper utilities.
+  - Added SMTP timeout settings to avoid long hangs.
+- User utilities API:
+  - Added profile update endpoint.
+  - Added password change endpoint.
+  - Added order utilities endpoint with role mode switching data.
+
+New/Updated API Surface
+- `PATCH /api/user/profile`
+- `PATCH /api/user/password`
+- `GET /api/user/orders?mode=RENTEE|LANDLORD`
+- Existing auth endpoints now return clearer message semantics for invalid credentials/duplicates.
+
+Files Reworked (This Pass)
+- backend/src/controllers/auth.controller.ts
+- backend/src/controllers/user.controller.ts
+- backend/src/routes/user.routes.ts
+- backend/src/services/email.service.ts
+- backend/src/utils/password.ts
+- src/app/components/navbar/*
+- src/app/components/login/*
+- src/app/components/signup/*
+- src/app/components/admin-login/*
+- src/app/components/dashboard/*
+- src/app/components/settings/*
+- src/app/components/my-orders/*
+- src/app/core/services/auth-api.service.ts
+- src/app/core/services/pwa-install.service.ts (new)
+- src/app/core/utils/password-policy.ts (new)
+- src/app/app.ts
+- src/app/app.config.ts
+- src/index.html
+- angular.json
+- ngsw-config.json (new)
+- public/manifest.webmanifest (new)
+- public/icons/icon-192x192.png (new)
+- public/icons/icon-512x512.png (new)
+- package.json / package-lock.json
+
+Verification Performed
+- Backend TypeScript build: PASS
+- Frontend Angular production build: PASS (existing style budget warnings remain)
+- Live API smoke checks:
+  - Login success (real user creds): PASS
+  - Wrong password message: PASS
+  - Duplicate email registration error: PASS
+  - Password policy rejection (weak password): PASS
+  - `/api/user/orders?mode=LANDLORD`: PASS
+  - `/api/user/password` wrong current password message: PASS
+
+Residual Risks / Next Recommendations
+1. Token storage remains in localStorage; move to HttpOnly cookie + refresh token rotation for stronger XSS resilience.
+2. Add automated integration tests for:
+   - auth error semantics
+   - settings update flows
+   - order mode toggle and API binding
+3. Replace static order utility dataset with persisted DB models when product requirements are finalized.

@@ -19,6 +19,7 @@ export class AdminLoginComponent {
 
   loading = false;
   errorMessage = '';
+  showPassword = false;
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -35,9 +36,12 @@ export class AdminLoginComponent {
     this.errorMessage = '';
 
     this.authService
-      .loginAdmin(this.loginForm.getRawValue())
+      .loginAdmin({
+        identifier: this.loginForm.getRawValue().email,
+        password: this.loginForm.getRawValue().password
+      })
       .pipe(
-        timeout(15000),
+        timeout(7000),
         finalize(() => {
           this.loading = false;
         })
@@ -60,6 +64,10 @@ export class AdminLoginComponent {
       return error.error?.message ?? fallback;
     }
 
-    return 'Request timed out. Please try again.';
+    return 'Request timed out quickly. Please try again.';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

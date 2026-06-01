@@ -6,14 +6,29 @@ import { prisma } from '../config/prisma';
 import { sendRegistrationOtp } from '../services/email.service';
 import { signAccessToken } from '../utils/jwt';
 import { generateOtpCode, isExpired } from '../utils/otp';
-import { hashPassword, verifyPassword } from '../utils/password';
+import {
+  hashPassword,
+  isPasswordStrong,
+  PASSWORD_POLICY_MESSAGE,
+  verifyPassword
+} from '../utils/password';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
+
+const normalizePhone = (value?: string | null): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = value.replace(/[^\d+]/g, '');
+  return normalized.length >= 8 ? normalized : null;
+};
 
 const registerRequestSchema = z.object({
   name: z.string().trim().min(2),
   email: z.string().trim().email(),
-  password: z.string().min(6),
-  confirmPassword: z.string().min(6)
+  phone: z.string().trim().min(8).max(20).optional(),
+  password: z.string().min(8).max(64),
+  confirmPassword: z.string().min(8).max(64)
 });
 
 const verifyRegisterSchema = z.object({
@@ -22,10 +37,11 @@ const verifyRegisterSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string().trim().email(),
-  password: z.string().min(6)
+  identifier: z.string().trim().min(3),
+  password: z.string().min(1)
 });
 
+<<<<<<< HEAD
 const isDatabaseConnectionError = (error: unknown): boolean => {
   return (
     error instanceof Error &&
@@ -58,6 +74,16 @@ const buildDevelopmentUser = (email: string, requiredRole: UserRole) => {
 };
 
 const buildTokenResponse = (user: { id: string; email: string; name: string; role: UserRole }) => {
+=======
+const buildTokenResponse = (user: {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  phone: string | null;
+  unioCoins: number;
+}) => {
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   const accessToken = signAccessToken({
     sub: user.id,
     email: user.email,
@@ -71,6 +97,8 @@ const buildTokenResponse = (user: { id: string; email: string; name: string; rol
       id: user.id,
       email: user.email,
       name: user.name,
+      phone: user.phone,
+      unioCoins: user.unioCoins,
       role: user.role
     }
   };
@@ -83,26 +111,47 @@ export const requestRegistrationOtp = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid payload', errors: parsed.error.flatten() });
   }
 
-  const { name, email, password, confirmPassword } = parsed.data;
+  const { name, email, phone, password, confirmPassword } = parsed.data;
+  const normalizedEmail = email.toLowerCase();
+  const normalizedPhone = normalizePhone(phone);
 
   if (password !== confirmPassword) {
     return res.status(400).json({ message: 'Password and confirm password must match' });
   }
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return res.status(409).json({ message: 'User already exists. Please login.' });
+  if (!isPasswordStrong(password)) {
+    return res.status(400).json({ message: PASSWORD_POLICY_MESSAGE });
+  }
+
+  const existingByEmail = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true }
+  });
+  if (existingByEmail) {
+    return res.status(409).json({ message: 'Email is already registered. Please login.' });
+  }
+
+  if (normalizedPhone) {
+    const existingByPhone = await prisma.user.findUnique({
+      where: { phone: normalizedPhone },
+      select: { id: true }
+    });
+
+    if (existingByPhone) {
+      return res.status(409).json({ message: 'Mobile number is already registered. Please login.' });
+    }
   }
 
   const otpCode = generateOtpCode();
   const passwordHash = await hashPassword(password);
   const expiresAt = new Date(Date.now() + env.OTP_TTL_MINUTES * 60 * 1000);
 
-  await prisma.registrationOtp.deleteMany({ where: { email } });
+  await prisma.registrationOtp.deleteMany({ where: { email: normalizedEmail } });
 
   await prisma.registrationOtp.create({
     data: {
-      email,
+      email: normalizedEmail,
+      phone: normalizedPhone,
       name,
       passwordHash,
       otpCode,
@@ -110,11 +159,18 @@ export const requestRegistrationOtp = async (req: Request, res: Response) => {
     }
   });
 
-  await sendRegistrationOtp(email, otpCode, env.OTP_TTL_MINUTES);
+  try {
+    await sendRegistrationOtp(normalizedEmail, otpCode, env.OTP_TTL_MINUTES);
+  } catch {
+    await prisma.registrationOtp.deleteMany({ where: { email: normalizedEmail } });
+    return res.status(503).json({
+      message: 'Unable to deliver OTP right now. Please try again in a moment.'
+    });
+  }
 
   return res.status(200).json({
     message: 'OTP sent to your email.',
-    email
+    email: normalizedEmail
   });
 };
 
@@ -125,7 +181,8 @@ export const verifyRegistrationOtp = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid payload', errors: parsed.error.flatten() });
   }
 
-  const { email, otp } = parsed.data;
+  const { otp } = parsed.data;
+  const email = parsed.data.email.toLowerCase();
 
   const otpRecord = await prisma.registrationOtp.findFirst({
     where: { email },
@@ -153,10 +210,25 @@ export const verifyRegistrationOtp = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid OTP.' });
   }
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
+  const existingByEmail = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true }
+  });
+  if (existingByEmail) {
     await prisma.registrationOtp.deleteMany({ where: { email } });
-    return res.status(409).json({ message: 'User already exists. Please login.' });
+    return res.status(409).json({ message: 'Email is already registered. Please login.' });
+  }
+
+  if (otpRecord.phone) {
+    const existingByPhone = await prisma.user.findUnique({
+      where: { phone: otpRecord.phone },
+      select: { id: true }
+    });
+
+    if (existingByPhone) {
+      await prisma.registrationOtp.deleteMany({ where: { email } });
+      return res.status(409).json({ message: 'Mobile number is already registered. Please login.' });
+    }
   }
 
   const createdUser = await prisma.$transaction(async (tx) => {
@@ -164,6 +236,7 @@ export const verifyRegistrationOtp = async (req: Request, res: Response) => {
       data: {
         name: otpRecord.name,
         email: otpRecord.email,
+        phone: otpRecord.phone,
         passwordHash: otpRecord.passwordHash,
         role: UserRole.USER,
         emailVerifiedAt: new Date()
@@ -187,8 +260,11 @@ const loginByRole = async (req: Request, res: Response, requiredRole: UserRole) 
     return res.status(400).json({ message: 'Invalid payload', errors: parsed.error.flatten() });
   }
 
-  const { email, password } = parsed.data;
+  const { identifier, password } = parsed.data;
+  const normalizedIdentifier = identifier.toLowerCase();
+  const normalizedPhone = normalizePhone(identifier);
 
+<<<<<<< HEAD
   let user;
 
   try {
@@ -209,13 +285,29 @@ const loginByRole = async (req: Request, res: Response, requiredRole: UserRole) 
     throw error;
   }
 
+=======
+  const lookupClauses: Array<{ email?: string; phone?: string }> = [{ email: normalizedIdentifier }];
+  if (normalizedPhone) {
+    lookupClauses.push({ phone: normalizedPhone });
+  }
+
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: lookupClauses
+    }
+  });
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+    return res.status(401).json({
+      message: normalizedPhone
+        ? 'Mobile number is not registered.'
+        : 'Email is not registered.'
+    });
   }
 
   const isPasswordValid = await verifyPassword(password, user.passwordHash);
   if (!isPasswordValid) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+    return res.status(401).json({ message: 'Wrong password.' });
   }
 
   if (requiredRole === UserRole.USER && user.role !== UserRole.USER) {
@@ -245,6 +337,7 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
+<<<<<<< HEAD
   let user;
 
   try {
@@ -259,6 +352,20 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
 
     throw error;
   }
+=======
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      unioCoins: true,
+      role: true,
+      createdAt: true
+    }
+  });
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
   if (!user) {
     return res.status(404).json({ message: 'User not found' });

@@ -4,7 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
 import { AuthApiService } from '../../core/services/auth-api.service';
+<<<<<<< HEAD
 import { LocationSearchService } from '../../core/services/location-search.service';
+=======
+import { PwaInstallService } from '../../core/services/pwa-install.service';
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +19,11 @@ import { LocationSearchService } from '../../core/services/location-search.servi
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthApiService);
+<<<<<<< HEAD
   private readonly locationSearch = inject(LocationSearchService);
+=======
+  private readonly pwaInstallService = inject(PwaInstallService);
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   private readonly router = inject(Router);
   private readonly zone = inject(NgZone);
   private routeSubscription?: Subscription;
@@ -35,10 +43,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   locationPanelOpen = false;
   isFetchingLocation = false;
   theme: 'light' | 'dark' = 'light';
+  mobileAppUrl = 'https://play.google.com/store/apps/details?id=com.unio.mobile';
+  installingApp = false;
   readonly currentUser = this.authService.currentUser;
   readonly isLoggedIn = this.authService.isLoggedIn;
+  readonly canInstallPwa = this.pwaInstallService.canInstall;
+  readonly isPwaInstalled = this.pwaInstallService.isInstalled;
 
   ngOnInit(): void {
+    this.pwaInstallService.init();
+
     const savedTheme = localStorage.getItem('unio-theme');
     const prefersDark =
       typeof window.matchMedia === 'function' &&
@@ -50,6 +64,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.authService.syncProfile().subscribe();
     }
 
+<<<<<<< HEAD
     this.updateRouteState(this.router.url);
     this.routeSubscription = this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -79,6 +94,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.routeSubscription?.unsubscribe();
     this.locationSubscription?.unsubscribe();
     this.removeScrollListener?.();
+=======
+    this.authService.getMobileAppInstallUrl().subscribe((url) => {
+      this.mobileAppUrl = url;
+    });
+>>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 
   toggleMenu(): void {
@@ -157,9 +177,40 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  async installMobileApp(): Promise<void> {
+    if (this.installingApp) {
+      return;
+    }
+
+    this.installingApp = true;
+    try {
+      const result = await this.pwaInstallService.promptInstall();
+      this.closeMenu();
+
+      if (result === 'unavailable') {
+        window.open(this.mobileAppUrl, '_blank', 'noopener');
+      }
+    } finally {
+      this.installingApp = false;
+    }
+  }
+
   userInitial(): string {
     const name = this.currentUser()?.name.trim();
     return name ? name[0].toUpperCase() : 'U';
+  }
+
+  userName(): string {
+    return this.currentUser()?.name || 'Guest';
+  }
+
+  userContact(): string {
+    const user = this.currentUser();
+    return user?.phone || user?.email || 'mobile or mail';
+  }
+
+  userCoins(): number {
+    return this.currentUser()?.unioCoins ?? 0;
   }
 
   private applyTheme(): void {

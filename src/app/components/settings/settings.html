@@ -1,16 +1,175 @@
 <section class="page-shell">
   <div class="page-head">
-    <p class="eyebrow">Preferences</p>
-    <h1>Setting</h1>
-    <p>Manage your account, communication and privacy controls.</p>
+    <p class="eyebrow">Account controls</p>
+    <h1>Settings</h1>
+    <p>Update your profile and security preferences from one place.</p>
   </div>
 
-  <section class="settings-grid">
-    @for (item of settings; track item.label) {
-      <article class="setting-card">
-        <h2>{{ item.label }}</h2>
-        <p>{{ item.value }}</p>
-      </article>
-    }
+  <section class="settings-layout">
+    <article class="settings-menu">
+      <header>
+        <span class="collapse-icon">-</span>
+        <h2>Settings</h2>
+      </header>
+
+      <nav>
+        @for (utility of utilities; track utility.key) {
+          <button
+            type="button"
+            class="menu-item"
+            [class.active]="activeUtility === utility.key"
+            (click)="selectUtility(utility.key)"
+          >
+            {{ utility.label }}
+          </button>
+        }
+      </nav>
+    </article>
+
+    <article class="settings-panel">
+      @if (activeUtility === 'profile-overview') {
+        <section class="panel-content">
+          <h3>Change Profile</h3>
+          <p>Current account details synced from backend.</p>
+
+          <div class="summary-grid">
+            <div>
+              <span>Name</span>
+              <strong>{{ currentUser()?.name || '-' }}</strong>
+            </div>
+            <div>
+              <span>Email</span>
+              <strong>{{ currentUser()?.email || '-' }}</strong>
+            </div>
+            <div>
+              <span>Mobile</span>
+              <strong>{{ currentUser()?.phone || 'Not added' }}</strong>
+            </div>
+            <div>
+              <span>Unio Coins</span>
+              <strong>{{ currentUser()?.unioCoins ?? 0 }}</strong>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (activeUtility === 'change-profile') {
+        <section class="panel-content">
+          <h3>Change Name, Email, Number</h3>
+          <p>Update your profile details. Changes are synced immediately.</p>
+
+          <form class="settings-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <label>
+              <span>Name</span>
+              <input type="text" formControlName="name" placeholder="Enter full name" />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input type="email" formControlName="email" placeholder="Enter email" />
+            </label>
+
+            <label>
+              <span>Mobile Number</span>
+              <input type="text" formControlName="phone" placeholder="Enter mobile number" />
+            </label>
+
+            @if (profileError) {
+              <p class="message error">{{ profileError }}</p>
+            }
+
+            @if (profileMessage) {
+              <p class="message success">{{ profileMessage }}</p>
+            }
+
+            <button type="submit" class="submit-btn" [disabled]="savingProfile">
+              {{ savingProfile ? 'Saving...' : 'Save profile changes' }}
+            </button>
+          </form>
+        </section>
+      }
+
+      @if (activeUtility === 'change-password') {
+        <section class="panel-content">
+          <h3>Change Password</h3>
+          <p>{{ passwordPolicyHint }}</p>
+
+          <form class="settings-form" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+            <label>
+              <span>Current Password</span>
+              <div class="password-field">
+                <input
+                  [type]="showCurrentPassword ? 'text' : 'password'"
+                  formControlName="currentPassword"
+                  placeholder="Enter current password"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  [attr.aria-label]="showCurrentPassword ? 'Hide password' : 'Show password'"
+                  (click)="togglePasswordVisibility('current')"
+                >
+                  <span class="material-icons">{{
+                    showCurrentPassword ? 'visibility_off' : 'visibility'
+                  }}</span>
+                </button>
+              </div>
+            </label>
+
+            <label>
+              <span>New Password</span>
+              <div class="password-field">
+                <input
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  placeholder="Enter new password"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  [attr.aria-label]="showNewPassword ? 'Hide password' : 'Show password'"
+                  (click)="togglePasswordVisibility('new')"
+                >
+                  <span class="material-icons">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
+                </button>
+              </div>
+            </label>
+
+            <label>
+              <span>Confirm New Password</span>
+              <div class="password-field">
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmNewPassword"
+                  placeholder="Confirm new password"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+                  (click)="togglePasswordVisibility('confirm')"
+                >
+                  <span class="material-icons">{{
+                    showConfirmPassword ? 'visibility_off' : 'visibility'
+                  }}</span>
+                </button>
+              </div>
+            </label>
+
+            @if (passwordError) {
+              <p class="message error">{{ passwordError }}</p>
+            }
+
+            @if (passwordMessage) {
+              <p class="message success">{{ passwordMessage }}</p>
+            }
+
+            <button type="submit" class="submit-btn" [disabled]="updatingPassword">
+              {{ updatingPassword ? 'Updating...' : 'Update password' }}
+            </button>
+          </form>
+        </section>
+      }
+    </article>
   </section>
 </section>
