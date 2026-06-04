@@ -84,9 +84,8 @@
   <div class="booking-shell" [class.booking-shell-hidden]="bookingHidden">
     <p class="booking-note">Book your ideal rental stay directly from landlords.</p>
 
-<<<<<<< HEAD
     <div class="booking-scroll" aria-label="Rental booking filters">
-      <div class="booking-bar">
+      <div class="booking-bar" aria-label="Rental booking filters">
         <label class="booking-field booking-field-location">
           <span class="booking-label">City, property name or location</span>
           <input
@@ -99,14 +98,6 @@
             autocomplete="off"
           />
           <small>{{ selectedLocation }}</small>
-=======
-    <div class="booking-scroll" aria-label="Scrollable booking filters">
-      <div class="booking-bar" aria-label="Rental booking filters">
-        <label class="booking-field booking-field-location">
-          <span class="booking-label">City, property name or location</span>
-          <strong>Jabalpur</strong>
-          <small>Madhya Pradesh</small>
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
         </label>
 
         <label class="booking-field">
@@ -171,19 +162,16 @@
     </div>
 
     <nav class="drawer-links">
-<<<<<<< HEAD
       <a routerLink="/" (click)="closeMenu()">Home</a>
       @if (isLoggedIn()) {
         <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
       }
       <a routerLink="/quick-rent" (click)="closeMenu()">Accommodation</a>
       <a routerLink="/publish-property" (click)="closeMenu()">List property</a>
-=======
       <a routerLink="/coins" (click)="closeMenu()">
         Unio Coins
         <span class="coin-pill">{{ userCoins() }}</span>
       </a>
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
       <a routerLink="/orders" (click)="closeMenu()">My Orders</a>
       <button type="button" class="drawer-install" (click)="installMobileApp()">
         @if (installingApp) {

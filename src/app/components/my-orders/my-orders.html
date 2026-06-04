@@ -5,7 +5,6 @@
     <p>Track history, requests and enquiries with role-based view.</p>
   </div>
 
-<<<<<<< HEAD
   @if (bookings.length) {
     <section class="orders-grid">
       @for (booking of bookings; track booking.id) {
@@ -31,16 +30,6 @@
     <p class="orders-note">{{ loadError }}</p>
   }
 
-  <section class="orders-grid">
-    @for (order of orders; track order.title) {
-      <article class="order-card">
-        <div class="status-row">
-          <h2>{{ order.title }}</h2>
-          <span class="status" [class.active]="order.status === 'Active'" [class.completed]="order.status === 'Completed'">
-            {{ order.status }}
-          </span>
-        </div>
-=======
   <div class="mode-toggle" role="tablist" aria-label="Order role mode">
     @for (option of modeOptions; track option.key) {
       <button
@@ -55,7 +44,6 @@
       </button>
     }
   </div>
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
   @if (errorMessage) {
     <p class="state-message error">{{ errorMessage }}</p>
@@ -85,4 +73,3 @@
       </article>
     }
   </section>
-</section>

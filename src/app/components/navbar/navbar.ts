@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
 import { AuthApiService } from '../../core/services/auth-api.service';
-<<<<<<< HEAD
+//HEAD
 import { LocationSearchService } from '../../core/services/location-search.service';
-=======
+//
 import { PwaInstallService } from '../../core/services/pwa-install.service';
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
 @Component({
   selector: 'app-navbar',
@@ -19,11 +19,11 @@ import { PwaInstallService } from '../../core/services/pwa-install.service';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthApiService);
-<<<<<<< HEAD
+//HEAD
   private readonly locationSearch = inject(LocationSearchService);
-=======
+//
   private readonly pwaInstallService = inject(PwaInstallService);
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   private readonly router = inject(Router);
   private readonly zone = inject(NgZone);
   private routeSubscription?: Subscription;
@@ -64,7 +64,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.authService.syncProfile().subscribe();
     }
 
-<<<<<<< HEAD
+//HEAD
     this.updateRouteState(this.router.url);
     this.routeSubscription = this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -94,11 +94,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.routeSubscription?.unsubscribe();
     this.locationSubscription?.unsubscribe();
     this.removeScrollListener?.();
-=======
+//
     this.authService.getMobileAppInstallUrl().subscribe((url) => {
       this.mobileAppUrl = url;
     });
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 
   toggleMenu(): void {

@@ -145,7 +145,6 @@
   font-size: 0.78rem;
 }
 
-<<<<<<< HEAD
 .order-card p {
   color: #667d92;
 }
@@ -164,10 +163,7 @@
   font-weight: 800;
 }
 
-@media (max-width: 980px) {
-=======
 @media (max-width: 1080px) {
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   .orders-grid {
     grid-template-columns: 1fr;
   }

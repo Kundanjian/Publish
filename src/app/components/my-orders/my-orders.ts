@@ -1,19 +1,15 @@
 import { CommonModule } from '@angular/common';
-<<<<<<< HEAD
 import { Component, OnInit, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize, timeout } from 'rxjs';
 import { ApiBooking } from '../../core/models/api.models';
 import { PropertyApiService } from '../../core/services/property-api.service';
 import { orderItems } from '../../data/market-data';
-=======
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
-import { finalize, timeout } from 'rxjs';
 import {
   AuthApiService,
   OrderUtilityMode,
   OrderUtilitySection
 } from '../../core/services/auth-api.service';
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
 @Component({
   selector: 'app-my-orders',
@@ -23,24 +19,12 @@ import {
   styleUrls: ['./my-orders.css']
 })
 export class MyOrdersComponent implements OnInit {
-<<<<<<< HEAD
   private readonly propertyApi = inject(PropertyApiService);
+  private readonly authService = inject(AuthApiService);
+  
   readonly orders = orderItems;
   bookings: ApiBooking[] = [];
   loadError = '';
-
-  ngOnInit(): void {
-    this.propertyApi.getBookings().subscribe({
-      next: (bookings) => {
-        this.bookings = bookings;
-      },
-      error: () => {
-        this.loadError = 'Showing demo orders because live bookings could not be loaded.';
-      }
-    });
-=======
-  private readonly authService = inject(AuthApiService);
-
   activeMode: OrderUtilityMode = 'RENTEE';
   sections: OrderUtilitySection[] = [];
   loading = false;
@@ -98,7 +82,7 @@ export class MyOrdersComponent implements OnInit {
     }
 
     return 'Request timed out quickly. Please try again.';
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 }
 

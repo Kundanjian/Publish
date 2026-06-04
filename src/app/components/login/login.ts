@@ -19,11 +19,11 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
-<<<<<<< HEAD
+//HEAD
   warningMessage = '';
-=======
+//
   showPassword = false;
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     identifier: ['', [Validators.required, Validators.minLength(3)]],

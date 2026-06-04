@@ -235,13 +235,13 @@ export class AuthApiService {
   }
 
   private setSession(response: AuthResponse): void {
-<<<<<<< HEAD
+//HEAD
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     sessionStorage.setItem(this.tokenKey, response.accessToken);
     sessionStorage.setItem(this.userKey, JSON.stringify(response.user));
     this.currentUserSignal.set(response.user);
-=======
+//
     localStorage.setItem(this.tokenKey, response.accessToken);
     this.persistUser(response.user);
   }
@@ -249,7 +249,7 @@ export class AuthApiService {
   private persistUser(user: AuthUser): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.currentUserSignal.set(user);
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 
   private readUserFromStorage(): AuthUser | null {

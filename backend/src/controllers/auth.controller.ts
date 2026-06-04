@@ -41,7 +41,6 @@ const loginSchema = z.object({
   password: z.string().min(1)
 });
 
-<<<<<<< HEAD
 const isDatabaseConnectionError = (error: unknown): boolean => {
   return (
     error instanceof Error &&
@@ -73,8 +72,6 @@ const buildDevelopmentUser = (email: string, requiredRole: UserRole) => {
   };
 };
 
-const buildTokenResponse = (user: { id: string; email: string; name: string; role: UserRole }) => {
-=======
 const buildTokenResponse = (user: {
   id: string;
   email: string;
@@ -83,7 +80,6 @@ const buildTokenResponse = (user: {
   phone: string | null;
   unioCoins: number;
 }) => {
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   const accessToken = signAccessToken({
     sub: user.id,
     email: user.email,
@@ -264,14 +260,22 @@ const loginByRole = async (req: Request, res: Response, requiredRole: UserRole) 
   const normalizedIdentifier = identifier.toLowerCase();
   const normalizedPhone = normalizePhone(identifier);
 
-<<<<<<< HEAD
   let user;
 
   try {
-    user = await prisma.user.findUnique({ where: { email } });
+    const lookupClauses: Array<{ email?: string; phone?: string }> = [{ email: normalizedIdentifier }];
+    if (normalizedPhone) {
+      lookupClauses.push({ phone: normalizedPhone });
+    }
+
+    user = await prisma.user.findFirst({
+      where: {
+        OR: lookupClauses
+      }
+    });
   } catch (error) {
     if (isDatabaseConnectionError(error) && isDevelopmentFallbackEnabled()) {
-      const fallbackUser = buildDevelopmentUser(email, requiredRole);
+      const fallbackUser = buildDevelopmentUser(normalizedIdentifier, requiredRole);
 
       return res.status(200).json({
         message:
@@ -284,19 +288,6 @@ const loginByRole = async (req: Request, res: Response, requiredRole: UserRole) 
 
     throw error;
   }
-
-=======
-  const lookupClauses: Array<{ email?: string; phone?: string }> = [{ email: normalizedIdentifier }];
-  if (normalizedPhone) {
-    lookupClauses.push({ phone: normalizedPhone });
-  }
-
-  const user = await prisma.user.findFirst({
-    where: {
-      OR: lookupClauses
-    }
-  });
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   if (!user) {
     return res.status(401).json({
       message: normalizedPhone
@@ -337,13 +328,20 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-<<<<<<< HEAD
   let user;
 
   try {
     user = await prisma.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, name: true, email: true, role: true, createdAt: true }
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        unioCoins: true,
+        role: true,
+        createdAt: true
+      }
     });
   } catch (error) {
     if (isDatabaseConnectionError(error) && isDevelopmentFallbackEnabled()) {
@@ -352,20 +350,6 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
 
     throw error;
   }
-=======
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-      unioCoins: true,
-      role: true,
-      createdAt: true
-    }
-  });
->>>>>>> 7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
