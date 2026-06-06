@@ -1,0 +1,104 @@
+<section class="auth-shell">
+  <div class="auth-backdrop"></div>
+
+  <article class="auth-card">
+    <p class="auth-kicker">Join the community</p>
+    <h1>Register</h1>
+
+    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="requestOtp()">
+      <label>
+        <span>Name</span>
+        <input type="text" placeholder="Enter full name" formControlName="name" autocomplete="name" />
+      </label>
+
+      <label>
+        <span>Email</span>
+        <input type="email" placeholder="Enter email" formControlName="email" autocomplete="email" />
+      </label>
+
+      <label>
+        <span>Mobile (Optional)</span>
+        <input type="text" placeholder="Enter mobile number" formControlName="phone" />
+      </label>
+
+      <label>
+        <span>Password</span>
+//HEAD
+        <input type="password" placeholder="Create password" formControlName="password" autocomplete="new-password" />
+//
+        <div class="password-field">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Create password"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            (click)="togglePasswordVisibility('main')"
+          >
+            <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        <small class="field-hint">{{ passwordPolicyHint }}</small>
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+      </label>
+
+      <label>
+        <span>Confirm Password</span>
+//HEAD
+        <input type="password" placeholder="Confirm password" formControlName="confirmPassword" autocomplete="new-password" />
+//
+        <div class="password-field">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            placeholder="Confirm password"
+            formControlName="confirmPassword"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+            (click)="togglePasswordVisibility('confirm')"
+          >
+            <span class="material-icons">{{
+              showConfirmPassword ? 'visibility_off' : 'visibility'
+            }}</span>
+          </button>
+        </div>
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+      </label>
+
+      @if (errorMessage) {
+        <p class="auth-message error">{{ errorMessage }}</p>
+      }
+
+      @if (successMessage) {
+        <p class="auth-message success">{{ successMessage }}</p>
+      }
+
+      <button type="submit" class="cta" [class.ready-btn]="registerForm.valid" [disabled]="loading">
+        {{ loading ? 'Sending OTP...' : otpSent ? 'Resend OTP' : 'Send OTP' }}
+      </button>
+    </form>
+
+    @if (otpSent) {
+      <form class="otp-form" [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+        <label>
+          <span>OTP</span>
+          <input type="text" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit OTP" formControlName="otp" autocomplete="one-time-code" />
+        </label>
+
+        <button type="submit" class="cta verify-btn" [class.ready-btn]="otpForm.valid" [disabled]="loading">
+          {{ loading ? 'Verifying...' : 'Verify OTP & Create Account' }}
+        </button>
+      </form>
+    }
+
+    <p class="auth-switch">
+      Already have an account?
+      <a routerLink="/login">Log in</a>
+    </p>
+  </article>
+</section>

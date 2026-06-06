@@ -1,3 +1,28 @@
 .app-shell {
   min-height: calc(100vh - 76px);
 }
+
+.site-footer {
+  display: grid;
+  gap: 10px;
+  padding: 28px clamp(18px, 5vw, 56px);
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface-raised);
+  color: var(--text-soft);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.site-footer a {
+  color: var(--unio-blue-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-footer p {
+  margin: 0;
+}

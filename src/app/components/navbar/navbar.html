@@ -1,17 +1,196 @@
-<header class="navbar">
-  <a class="brand" routerLink="/">
-    <span class="brand-mark">U</span>
-    <span class="brand-text">Unio</span>
-  </a>
+<header class="navbar" [class.navbar-hidden]="navbarHidden">
+  <div class="nav-top">
+    <div class="nav-left">
+      <button type="button" class="menu-btn" aria-label="Open menu" (click)="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
-  <nav class="nav-links" aria-label="Primary navigation">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">home</a>
-    <a routerLink="/quick-rent" routerLinkActive="active">Rentals</a>
-    <a routerLink="/help" routerLinkActive="active">more</a>
-  </nav>
+      <a class="brand" routerLink="/" (click)="closeMenu()">
+        <img src="/unio-logo-transparent.png" alt="Unio logo" class="brand-logo" />
+      </a>
+    </div>
 
-  <div class="auth-actions">
-    <button type="button" class="ghost-btn">Log in</button>
-    <button type="button" class="primary-btn">Register</button>
+    <div class="nav-filters" aria-label="Primary filters">
+      <label class="nav-filter">
+        <span>Duration</span>
+        <select>
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+        </select>
+      </label>
+
+      <label class="nav-filter location-search">
+        <span>Location</span>
+        <input
+          type="search"
+          [ngModel]="locationQuery"
+          (ngModelChange)="onLocationInput($event)"
+          (focus)="locationPanelOpen = locationSuggestions.length > 0"
+          (keydown.enter)="searchSelectedLocation()"
+          placeholder="Type city or locality"
+          autocomplete="off"
+        />
+        @if (locationPanelOpen) {
+          <div class="location-suggestions">
+            @for (suggestion of locationSuggestions; track suggestion) {
+              <button type="button" (click)="chooseLocation(suggestion)">
+                {{ suggestion }}
+              </button>
+            }
+          </div>
+        }
+      </label>
+
+      <button type="button" class="current-location-btn" [disabled]="isFetchingLocation" (click)="useCurrentLocation()">
+        {{ isFetchingLocation ? 'Fetching...' : 'Use current' }}
+      </button>
+
+      <button type="button" class="location-submit-btn" (click)="searchSelectedLocation()">
+        Find rentals
+      </button>
+    </div>
+
+    <div class="nav-right">
+      <button
+        type="button"
+        class="theme-toggle"
+        [attr.aria-label]="theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'"
+        (click)="toggleTheme()"
+      >
+        <span class="theme-toggle-track">
+          <span class="theme-toggle-thumb"></span>
+        </span>
+        <span class="theme-toggle-label">{{ theme === 'light' ? 'Light' : 'Dark' }}</span>
+      </button>
+
+      <div class="auth-actions">
+        @if (isLoggedIn()) {
+          <a routerLink="/dashboard" class="ghost-btn" (click)="closeMenu()">Dashboard</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
+          <button type="button" class="danger-btn" (click)="logout()">Logout</button>
+        } @else {
+          <a routerLink="/login" class="ghost-btn" (click)="closeMenu()">Log in</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
+          <a routerLink="/signup" class="primary-btn" (click)="closeMenu()">Register</a>
+        }
+      </div>
+    </div>
   </div>
+
+  @if (isHomePage) {
+  <div class="booking-shell" [class.booking-shell-hidden]="bookingHidden">
+    <p class="booking-note">Book your ideal rental stay directly from landlords.</p>
+
+    <div class="booking-scroll" aria-label="Rental booking filters">
+      <div class="booking-bar" aria-label="Rental booking filters">
+        <label class="booking-field booking-field-location">
+          <span class="booking-label">City, property name or location</span>
+          <input
+            type="search"
+            [ngModel]="locationQuery"
+            (ngModelChange)="onLocationInput($event)"
+            (focus)="locationPanelOpen = locationSuggestions.length > 0"
+            (keydown.enter)="searchSelectedLocation()"
+            placeholder="Search location"
+            autocomplete="off"
+          />
+          <small>{{ selectedLocation }}</small>
+        </label>
+
+        <label class="booking-field">
+          <span class="booking-label">Guests</span>
+          <select>
+            <option>1 Adult</option>
+            <option>2 Adults</option>
+            <option>Family / Group</option>
+          </select>
+          <small>Add adults and children</small>
+        </label>
+
+        <label class="booking-field">
+          <span class="booking-label">Move-In</span>
+          <select>
+            <option>Select date</option>
+            <option>This week</option>
+            <option>This month</option>
+          </select>
+          <small>Flexible start date</small>
+        </label>
+
+        <label class="booking-field">
+          <span class="booking-label">Stay Length</span>
+          <select>
+            <option>1-7 days</option>
+            <option>1-4 weeks</option>
+            <option>1-12 months</option>
+          </select>
+          <small>Short and long term</small>
+        </label>
+
+        <label class="booking-field">
+          <span class="booking-label">Budget</span>
+          <select>
+            <option>Rs 2,000 - Rs 6,000</option>
+            <option>Rs 6,000 - Rs 12,000</option>
+            <option>Rs 12,000+</option>
+          </select>
+          <small>Rent per stay cycle</small>
+        </label>
+      </div>
+    </div>
+
+    <div class="booking-cta-wrap">
+      <button type="button" class="booking-cta" (click)="searchSelectedLocation()">Search</button>
+    </div>
+  </div>
+  }
 </header>
+
+@if (menuOpen) {
+  <button type="button" class="menu-backdrop" aria-label="Close menu" (click)="closeMenu()"></button>
+
+  <aside class="menu-drawer">
+    <div class="drawer-head">
+      <div class="avatar">{{ userInitial() }}</div>
+      <div>
+        <h2>Guest: {{ userName() }}</h2>
+        <p>Mobile or Mail: {{ userContact() }}</p>
+      </div>
+    </div>
+
+    <nav class="drawer-links">
+      <a routerLink="/" (click)="closeMenu()">Home</a>
+      @if (isLoggedIn()) {
+        <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
+      }
+      <a routerLink="/quick-rent" (click)="closeMenu()">Accommodation</a>
+      <a routerLink="/publish-property" (click)="closeMenu()">List property</a>
+      <a routerLink="/coins" (click)="closeMenu()">
+        Unio Coins
+        <span class="coin-pill">{{ userCoins() }}</span>
+      </a>
+      <a routerLink="/orders" (click)="closeMenu()">My Orders</a>
+      <button type="button" class="drawer-install" (click)="installMobileApp()">
+        @if (installingApp) {
+          Installing...
+        } @else if (isPwaInstalled()) {
+          Unio App Installed
+        } @else if (canInstallPwa()) {
+          Install Unio Mobile App
+        } @else {
+          Install Unio Mobile App
+        }
+      </button>
+      <a routerLink="/help" (click)="closeMenu()">Help</a>
+      <a routerLink="/settings" (click)="closeMenu()">Settings</a>
+      @if (isLoggedIn()) {
+        <button type="button" class="drawer-logout" (click)="logout()">Log out</button>
+      } @else {
+        <a routerLink="/login" (click)="closeMenu()">Log in</a>
+      }
+    </nav>
+  </aside>
+}

@@ -1,0 +1,68 @@
+.location-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: var(--overlay-bg);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.location-card {
+  width: min(100%, 460px);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface-raised) 95%, transparent);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  padding: 24px;
+}
+
+.location-card h2 {
+  margin: 0 0 10px;
+  color: var(--text-strong);
+}
+
+.location-card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.location-status {
+  margin-top: 12px !important;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff1f2;
+  color: #991b1b !important;
+  font-weight: 800;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.actions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary {
+  background: color-mix(in srgb, var(--surface-soft) 90%, transparent);
+  color: var(--text-strong);
+}
+
+.primary {
+  background: var(--unio-blue-dark);
+  color: #ffffff;
+}
+
+.primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}

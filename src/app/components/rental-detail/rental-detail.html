@@ -1,0 +1,216 @@
+<section class="detail-page">
+  <div class="breadcrumbs">
+    <a routerLink="/">Home</a>
+    <span>/</span>
+    <a routerLink="/quick-rent">Rentals</a>
+    <span>/</span>
+    <span>{{ listing.title }}</span>
+  </div>
+
+  <section class="detail-layout">
+    <article class="gallery-card">
+      <img [src]="listing.image" [alt]="listing.title" fetchpriority="high" decoding="async" />
+
+      <div class="gallery-dots">
+        <span class="filled"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="gallery-actions">
+        <button type="button">CONTACT</button>
+        <a href="#quick-rent-checkout">RENT</a>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <h1>{{ listing.title }}</h1>
+      <p class="property-chip">{{ listing.propertyType }} - Direct landlord listing - {{ listing.location }}</p>
+
+      <div class="rating-row">
+        <span class="score">4.38 stars</span>
+        <span class="meta">3150 Ratings &amp; 218 Reviews</span>
+      </div>
+
+      <div class="stars" aria-label="Listing rating">
+        @for (filled of stars(listing.rating); track $index) {
+          <span [class.filled]="filled">&#9733;</span>
+        }
+      </div>
+
+      <p class="day-price">Rs {{ listing.dailyPrice }}/day</p>
+      <p class="week-price">Rs {{ listing.weeklyPrice || listing.dailyPrice * 6 }}/week</p>
+      <p class="month-price">Rs {{ listing.price }}{{ listing.unit }}</p>
+      <p class="availability-chip">
+        {{ listing.status || 'AVAILABLE' }} from {{ listing.availableFrom || 'today' }}
+      </p>
+
+      <p class="description">
+        This listing helps tenants go deeper before they rent: review facilities, understand what the landlord allows,
+        check stay suitability for family, bachelors or professionals, and compare daily, weekly and monthly pricing.
+      </p>
+
+      <h2>What this landlord allows</h2>
+      <ul class="highlights">
+        @for (rule of listing.rules || landlordRules; track rule) {
+          <li>{{ rule }}</li>
+        }
+      </ul>
+
+      <h2>Facilities provided</h2>
+      <ul class="highlights">
+        @for (facility of listing.specifications || listing.amenities || facilities; track facility) {
+          <li>{{ facility }}</li>
+        }
+      </ul>
+
+      @if (listing.addOns?.length) {
+        <h2>Paid add-ons</h2>
+        <ul class="highlights">
+          @for (addOn of listing.addOns; track addOn.name) {
+            <li>{{ addOn.name }} for Rs {{ addOn.charge }} extra</li>
+          }
+        </ul>
+      }
+    </article>
+  </section>
+
+  <section class="checkout-panel" id="quick-rent-checkout">
+    <div>
+      <p class="eyebrow">Quick rent checkout</p>
+      <h2>Pay for selected duration and unlock check-in details</h2>
+      <p>
+        Select dates, review the calculated rent, and confirm the booking. In this build the payment is simulated as paid
+        so the booking, invoice number and landlord contact are generated instantly.
+      </p>
+    </div>
+
+    <form class="checkout-form" #checkoutForm="ngForm" novalidate (ngSubmit)="confirmQuickRent(checkoutForm)">
+      <label>
+        Name
+        <input
+          type="text"
+          name="tenantName"
+          [(ngModel)]="bookingForm.tenantName"
+          #tenantName="ngModel"
+          required
+          [class.field-invalid]="checkoutForm.submitted && tenantName.invalid"
+        />
+      </label>
+
+      <label>
+        Email
+        <input
+          type="email"
+          name="tenantEmail"
+          [(ngModel)]="bookingForm.tenantEmail"
+          #tenantEmail="ngModel"
+          required
+          email
+          [class.field-invalid]="checkoutForm.submitted && tenantEmail.invalid"
+        />
+      </label>
+
+      <label>
+        Check-in
+        <input
+          type="date"
+          name="startDate"
+          [(ngModel)]="bookingForm.startDate"
+          #startDate="ngModel"
+          required
+          [class.field-invalid]="checkoutForm.submitted && startDate.invalid"
+        />
+      </label>
+
+      <label>
+        Check-out
+        <input
+          type="date"
+          name="endDate"
+          [(ngModel)]="bookingForm.endDate"
+          #endDate="ngModel"
+          required
+          [class.field-invalid]="checkoutForm.submitted && (endDate.invalid || (!endDate.invalid && !selectedDurationDays))"
+        />
+      </label>
+
+      <div class="price-summary">
+        <span>{{ selectedDurationDays }} days</span>
+        <strong>Rs {{ estimatedAmount }}</strong>
+      </div>
+
+      <button type="submit" [class.ready-btn]="checkoutForm.valid && selectedDurationDays" [disabled]="isBooking">
+        {{ isBooking ? 'Confirming...' : 'Pay and confirm booking' }}
+      </button>
+
+      @if (bookingError) {
+        <p class="checkout-error">{{ bookingError }}</p>
+      }
+
+      @if (confirmedBooking) {
+        <div class="booking-success">
+          <strong>{{ bookingMessage }}</strong>
+          <p>Booking: {{ confirmedBooking.id }} | Invoice: {{ confirmedBooking.invoiceNo }}</p>
+          <p>
+            Landlord: {{ confirmedBooking.landlordContact.name }},
+            {{ confirmedBooking.landlordContact.phone }},
+            {{ confirmedBooking.landlordContact.email }}
+          </p>
+        </div>
+      }
+    </form>
+  </section>
+
+  <section class="details-table">
+    <h3>Details</h3>
+    <div class="spec-grid">
+      <div><span>Type</span><strong>Residential rent</strong></div>
+      <div><span>Property type</span><strong>{{ listing.propertyType }}</strong></div>
+      <div><span>Bedrooms</span><strong>1</strong></div>
+      <div><span>Bathrooms</span><strong>1</strong></div>
+      <div><span>Furnishing</span><strong>Semi-furnished</strong></div>
+      <div><span>Listed by</span><strong>Landlord</strong></div>
+      <div><span>Super Builtup area (sq ft)</span><strong>750</strong></div>
+      <div><span>Carpet Area (sq ft)</span><strong>750</strong></div>
+      <div><span>Bachelors Allowed</span><strong>Yes</strong></div>
+      <div><span>Maintenance (monthly)</span><strong>No</strong></div>
+      <div><span>Stay duration</span><strong>Daily / Weekly / Monthly</strong></div>
+      <div><span>Feedback checked</span><strong>Yes</strong></div>
+      <div><span>Nearby landmark</span><strong>{{ listing.nearbyLandmark || 'Ask landlord' }}</strong></div>
+      <div><span>Distance</span><strong>{{ listing.landmarkDistance || 'Ask landlord' }}</strong></div>
+      <div><span>Food</span><strong>{{ listing.foodAvailable ? (listing.foodOptions?.join(', ') || 'Available') : 'Not included' }}</strong></div>
+      <div><span>Entry rule</span><strong>{{ listing.entryRule || 'Ask landlord' }}</strong></div>
+    </div>
+  </section>
+
+  <section class="details-table feedback-panel">
+    <h3>Tenant feedback</h3>
+    <div class="feedback-list">
+      @for (note of feedbackNotes; track note) {
+        <p>{{ note }}</p>
+      }
+    </div>
+  </section>
+
+  <section class="related-section">
+    <div class="section-head">
+      <h3>More rentals nearby</h3>
+      <a routerLink="/quick-rent">View all</a>
+    </div>
+
+    <div class="related-grid">
+      @for (item of relatedListings; track item.id) {
+        <a class="related-card" [routerLink]="['/rentals', item.id]">
+          <img [src]="item.image" [alt]="item.title" loading="lazy" decoding="async" />
+          <div>
+            <strong>Rs {{ item.price }}{{ item.unit }}</strong>
+            <p>{{ item.title }}</p>
+          </div>
+        </a>
+      }
+    </div>
+  </section>
+</section>

@@ -1,12 +1,23 @@
 <section class="home-page">
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">UNDER 2 KM FROM YOUR LOCATION</p>
-      <h1>Find the right rental for your day, week or month.</h1>
+      <p class="eyebrow">DIRECT LANDLORD ACCOMMODATION</p>
+      <h1>Find hostels, flats, apartments and villas for daily, weekly or monthly rent.</h1>
       <p class="hero-text">
-        Browse bikes, cars, hostels and everyday essentials in Jabalpur with a fast,
-        familiar marketplace flow.
+        Unio helps tenants discover suitable accommodation directly from landlords,
+        compare facilities, understand house rules, and choose flexible stay durations with confidence.
       </p>
+
+      <div class="platform-points">
+        @for (point of platformHighlights; track point) {
+          <p>{{ point }}</p>
+        }
+      </div>
+
+      <div class="hero-actions">
+        <a class="primary-action" routerLink="/quick-rent">Explore rentals</a>
+        <a class="primary-action secondary-action" routerLink="/publish-property">List your property</a>
+      </div>
     </div>
 
     <div class="hero-panel">
@@ -23,7 +34,7 @@
         <label class="field-card">
           <span>location</span>
           <select>
-            <option>India</option>
+            <option>{{ selectedLocation() }}</option>
             @for (location of locationSuggestions; track location) {
               <option>{{ location }}</option>
             }
@@ -34,7 +45,9 @@
       <div class="category-row">
         @for (filter of quickFilters; track filter.label) {
           <article class="category-card">
-            <span class="category-icon">{{ filter.icon }}</span>
+            <span class="category-icon">
+              <img [src]="filter.icon" [alt]="filter.label" loading="lazy" decoding="async" />
+            </span>
             <span>{{ filter.label }}</span>
           </article>
         }
@@ -42,22 +55,23 @@
 
       <label class="search-bar">
         <span class="sr-only">Search</span>
-        <input type="text" value="Find Bike, Car, Hostels or More..." />
-        <button type="button" aria-label="Search">Go</button>
+        <input type="text" [value]="'Find rentals near ' + selectedCity()" readonly />
+        <a routerLink="/quick-rent" [queryParams]="{ location: selectedLocation() }" aria-label="Search">Go</a>
       </label>
     </div>
   </section>
 
-  <div class="breadcrumbs">Home/Hostels/Hostels in Jabalpur Madhya Pradesh</div>
+  <div class="breadcrumbs">Home/Rentals/Accommodation in {{ selectedLocation() }}</div>
 
+  @if (listings.length) {
   <section class="listing-grid">
-    @for (listing of listings; track listing.title) {
-      <article class="listing-card">
+    @for (listing of listings; track listing.id) {
+      <a class="listing-card" [routerLink]="['/rentals', listing.id]">
         <div class="image-wrap">
           @if (listing.badge) {
             <span class="badge">{{ listing.badge }}</span>
           }
-          <img [src]="listing.image" [alt]="listing.title" />
+          <img [src]="listing.image" [alt]="listing.title" loading="lazy" decoding="async" />
         </div>
 
         <div class="listing-content">
@@ -73,14 +87,21 @@
           <h2>{{ listing.title }}</h2>
           <p>{{ listing.summary }}</p>
         </div>
-      </article>
+      </a>
     }
   </section>
+  } @else {
+    <section class="empty-listings">
+      <h2>No exact listings found for {{ selectedLocation() }}</h2>
+      <p>Try a nearby locality or list a property in this area to make it visible on Unio.</p>
+      <a routerLink="/publish-property">List your property</a>
+    </section>
+  }
 
   <section class="discovery-grid">
     @for (tile of discoveryTiles; track tile.title) {
       <article class="discovery-card">
-        <img [src]="tile.image" [alt]="tile.title" />
+        <img [src]="tile.image" [alt]="tile.title" loading="lazy" decoding="async" />
         <div class="discovery-overlay">{{ tile.title }}</div>
       </article>
     }

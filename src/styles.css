@@ -1,15 +1,73 @@
+:root {
+  color-scheme: light;
+  --unio-blue: #0b88c7;
+  --unio-blue-dark: #1c567f;
+  --unio-blue-soft: #d9eef9;
+  --unio-border: #8fc0df;
+  --unio-orange: #f29a3a;
+  --unio-orange-dark: #d77a1c;
+  --unio-surface: #ffffff;
+  --unio-bg: #f9fbfd;
+  --unio-text: #2d4358;
+  --unio-muted: #6f8396;
+  --surface-raised: #ffffff;
+  --surface-soft: #f3f7fa;
+  --surface-subtle: #edf3f7;
+  --surface-accent: #f2f8fc;
+  --border-soft: #d9e8f2;
+  --border-strong: #b9d6e7;
+  --text-strong: #173758;
+  --text-soft: #6f8396;
+  --text-contrast: #ffffff;
+  --input-bg: #ffffff;
+  --shadow-soft: 0 16px 36px rgba(17, 56, 96, 0.08);
+  --shadow-header: 0 2px 8px rgba(25, 61, 92, 0.08);
+  --overlay-bg: rgba(15, 23, 42, 0.28);
+  --auth-backdrop:
+    radial-gradient(circle at 30% 55%, rgba(245, 176, 120, 0.5), transparent 22%),
+    radial-gradient(circle at 38% 70%, rgba(132, 168, 187, 0.45), transparent 24%),
+    linear-gradient(180deg, #f7f9fb, #eef6ff);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --unio-blue: #73c9ff;
+  --unio-blue-dark: #d6eeff;
+  --unio-blue-soft: #123046;
+  --unio-border: #2e5875;
+  --unio-orange: #ffb15c;
+  --unio-orange-dark: #dd8b2d;
+  --unio-surface: #0f1720;
+  --unio-bg: #091019;
+  --unio-text: #dbe7f2;
+  --unio-muted: #8ea5b9;
+  --surface-raised: #0f1720;
+  --surface-soft: #121f2b;
+  --surface-subtle: #162533;
+  --surface-accent: #122231;
+  --border-soft: #234056;
+  --border-strong: #2d5774;
+  --text-strong: #eef7ff;
+  --text-soft: #9ab0c3;
+  --text-contrast: #08121b;
+  --input-bg: #0d1924;
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.34);
+  --shadow-header: 0 10px 24px rgba(0, 0, 0, 0.28);
+  --overlay-bg: rgba(2, 8, 16, 0.62);
+  --auth-backdrop:
+    radial-gradient(circle at 30% 55%, rgba(242, 154, 58, 0.22), transparent 22%),
+    radial-gradient(circle at 38% 70%, rgba(115, 201, 255, 0.18), transparent 24%),
+    linear-gradient(180deg, #08111a, #0d1a25);
+}
+
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(circle at top, rgba(199, 230, 255, 0.35), transparent 32%),
-    #f6fbff;
-  color: #18212b;
-  font-family:
-    "Segoe UI",
-    Arial,
-    sans-serif;
+  background: var(--unio-bg);
+  color: var(--unio-text);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 body {
@@ -25,4 +83,16 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 }

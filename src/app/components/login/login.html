@@ -1,0 +1,61 @@
+<section class="auth-shell">
+  <div class="auth-backdrop"></div>
+
+  <article class="auth-card">
+    <p class="auth-kicker">Welcome back</p>
+    <h1>LOGIN</h1>
+
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="login()">
+      <label>
+//HEAD
+        <span>Email</span>
+        <input type="email" placeholder="Enter email" formControlName="email" autocomplete="email" />
+//
+        <span>Email or Mobile</span>
+        <input type="text" placeholder="Enter email or mobile" formControlName="identifier" />
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+      </label>
+
+      <label>
+        <span>Password</span>
+//HEAD
+        <input type="password" placeholder="Enter password" formControlName="password" autocomplete="current-password" />
+//
+        <div class="password-field">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Enter password"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            (click)="togglePasswordVisibility()"
+          >
+            <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
+      </label>
+
+      @if (errorMessage) {
+        <p class="auth-message error">{{ errorMessage }}</p>
+      }
+
+      <button type="submit" class="cta" [class.ready-btn]="loginForm.valid" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Sign in' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      New here?
+      <a routerLink="/signup">Create an account</a>
+    </p>
+
+    <p class="auth-admin-link">
+      Admin account?
+      <a routerLink="/admin-login">Use admin login</a>
+    </p>
+  </article>
+</section>

@@ -1,0 +1,22 @@
+<section class="accessories-page">
+  <div class="page-head">
+    <p class="eyebrow">Stay essentials</p>
+    <h1>Accessories for Rent</h1>
+    <p>Rent fridge, washing machine, sofa bed and other essentials together with your accommodation.</p>
+  </div>
+
+  <section class="accessories-grid">
+    @for (item of accessories; track item.name) {
+      <article class="accessory-card">
+        <img [src]="item.image" [alt]="item.name" />
+        <div class="accessory-content">
+          <div class="price-row">
+            <h2>{{ item.name }}</h2>
+            <span>{{ item.rent }}</span>
+          </div>
+          <p>{{ item.summary }}</p>
+        </div>
+      </article>
+    }
+  </section>
+</section>

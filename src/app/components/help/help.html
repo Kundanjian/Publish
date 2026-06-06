@@ -1,2 +1,16 @@
-<h2 class="page-title">Help</h2>
-<p>Support and help information will appear here.</p>
+<section class="page-shell">
+  <div class="page-head">
+    <p class="eyebrow">About Unio</p>
+    <h1>About the platform</h1>
+    <p>Unio is a direct landlord-to-tenant accommodation platform for daily, weekly and monthly stays.</p>
+  </div>
+
+  <section class="help-grid">
+    @for (topic of topics; track topic) {
+      <article class="help-card">
+        <h2>{{ topic }}</h2>
+        <p>Use Unio to compare facilities, check landlord rules, review feedback and choose the right rental with clarity.</p>
+      </article>
+    }
+  </section>
+</section>

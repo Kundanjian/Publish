@@ -1,0 +1,226 @@
+<section class="publish-page">
+  <div class="page-head">
+    <p class="eyebrow">Landlord onboarding</p>
+    <h1>Publish a property for quick rent</h1>
+    <p>Submit property basics, specifications and landlord rules. New listings go live instantly and appear first.</p>
+  </div>
+
+  <form class="publish-form" #publishForm="ngForm" novalidate (ngSubmit)="submitProperty(publishForm)">
+    <div class="stepper">
+      <span [class.active]="currentStep === 1">1. Basic details</span>
+      <span [class.active]="currentStep === 2">2. Specifications</span>
+    </div>
+
+    @if (currentStep === 1) {
+      <label>
+        Property title
+        <input type="text" name="title" [(ngModel)]="property.title" required minlength="3" />
+      </label>
+
+      <label>
+        Location
+        <input type="text" name="location" [(ngModel)]="property.location" required />
+      </label>
+
+      <label>
+        Property type
+        <select name="propertyType" [(ngModel)]="property.propertyType">
+          <option>Hostel</option>
+          <option>Flat</option>
+          <option>Apartment</option>
+          <option>Studio Apartment</option>
+          <option>Villa</option>
+        </select>
+      </label>
+
+      <label>
+        Monthly rent
+        <input type="number" name="price" [(ngModel)]="property.price" min="1" required />
+      </label>
+
+      <label>
+        Daily rent
+        <input type="number" name="dailyPrice" [(ngModel)]="property.dailyPrice" min="1" required />
+      </label>
+
+      <label>
+        Owner name
+        <input type="text" name="ownerName" [(ngModel)]="property.ownerName" required minlength="2" />
+      </label>
+
+      <label>
+        Owner phone
+        <input type="tel" name="ownerPhone" [(ngModel)]="property.ownerPhone" required minlength="8" />
+      </label>
+
+      <label>
+        Owner email
+        <input type="email" name="ownerEmail" [(ngModel)]="property.ownerEmail" required email />
+      </label>
+
+      <label class="wide">
+        Property summary
+        <textarea name="summary" rows="4" [(ngModel)]="property.summary" required minlength="10"></textarea>
+      </label>
+
+      <div class="wide upload-panel">
+        <div>
+          <strong>Property images</strong>
+          <span>Upload up to 8 images. Large photos are optimized before publishing.</span>
+        </div>
+        <label class="upload-btn">
+          Add property images
+          <input type="file" accept="image/*" multiple (change)="addPropertyImages($any($event.target).files)" />
+        </label>
+        @if (property.images.length) {
+          <div class="image-preview-grid">
+            @for (image of property.images; track image; let imageIndex = $index) {
+              <button type="button" class="image-preview" (click)="removePropertyImage(imageIndex)">
+                <img [src]="image" alt="Property preview" />
+                <span>Remove</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="wide"
+        [class.ready-btn]="publishForm.valid"
+        (click)="goToSpecifications(publishForm)"
+      >
+        Next: property specifications
+      </button>
+    }
+
+    @if (currentStep === 2) {
+      <fieldset class="wide option-panel">
+        <legend>Basic things included</legend>
+        <div class="check-grid">
+          @for (facility of facilityOptions; track facility) {
+            <label class="check-card">
+              <input
+                type="checkbox"
+                [checked]="hasSpecification(facility)"
+                (change)="toggleSpecification(facility, $any($event.target).checked)"
+              />
+              <span>{{ facility }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="wide option-panel">
+        <legend>Paid add-ons from landlord</legend>
+        <div class="addon-grid">
+          @for (addOn of addOnOptions; track addOn.name) {
+            <div class="addon-card">
+              <label class="check-card">
+                <input
+                  type="checkbox"
+                  [checked]="!!selectedAddOn(addOn.name)"
+                  (change)="toggleAddOn(addOn.name, $any($event.target).checked, addOn.charge)"
+                />
+                <span>{{ addOn.name }}</span>
+              </label>
+              @if (selectedAddOn(addOn.name)) {
+                <input
+                  type="number"
+                  min="0"
+                  [name]="'addon' + addOn.name"
+                  [ngModel]="selectedAddOn(addOn.name)?.charge"
+                  (ngModelChange)="updateAddOnCharge(addOn.name, $event)"
+                  aria-label="Extra charge"
+                />
+                <label class="upload-btn addon-upload">
+                  Add image
+                  <input type="file" accept="image/*" (change)="addAddOnImage(addOn.name, $any($event.target).files)" />
+                </label>
+                @if (selectedAddOn(addOn.name)?.image) {
+                  <button type="button" class="addon-image-preview" (click)="removeAddOnImage(addOn.name)">
+                    <img [src]="selectedAddOn(addOn.name)?.image" alt="Add-on preview" />
+                    <span>Remove image</span>
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+      </fieldset>
+
+      <label>
+        Nearest college, office, school or famous place
+        <input type="text" name="nearbyLandmark" [(ngModel)]="property.nearbyLandmark" required />
+      </label>
+
+      <label>
+        Distance from that place
+        <input type="text" name="landmarkDistance" [(ngModel)]="property.landmarkDistance" placeholder="Example: 1.2 km" required />
+      </label>
+
+      <fieldset class="wide option-panel compact-panel">
+        <legend>Food availability</legend>
+        <label class="toggle-row">
+          <input type="checkbox" name="foodAvailable" [(ngModel)]="property.foodAvailable" />
+          <span>Landlord can provide food</span>
+        </label>
+
+        @if (property.foodAvailable) {
+          <div class="check-grid">
+            @for (food of foodOptions; track food) {
+              <label class="check-card">
+                <input
+                  type="checkbox"
+                  [checked]="hasFoodOption(food)"
+                  (change)="toggleFoodOption(food, $any($event.target).checked)"
+                />
+                <span>{{ food }}</span>
+              </label>
+            }
+          </div>
+        }
+      </fieldset>
+
+      <label class="wide">
+        Entry rule
+        <select name="entryRule" [(ngModel)]="property.entryRule">
+          <option>24 hour entry allowed</option>
+          <option>Late night entry allowed until 10 PM</option>
+          <option>Late night entry allowed until 11 PM</option>
+          <option>Late night entry allowed until 12 AM</option>
+          <option>No late night entry</option>
+        </select>
+      </label>
+
+      <div class="approval-note">
+        <strong>Live listing</strong>
+        <span>After submit, this property appears instantly at the top of rentals for the selected location.</span>
+      </div>
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="goToBasics()">Back</button>
+        <button
+          type="submit"
+          [class.ready-btn]="publishForm.valid && !isSubmitted"
+          [class.submitted-btn]="isSubmitted"
+          [disabled]="isSubmitting || isSubmitted"
+        >
+          {{ isSubmitted ? 'Submitted' : isSubmitting ? 'Submitting...' : 'Publish live listing' }}
+        </button>
+      </div>
+    }
+
+    @if (imageError) {
+      <p class="error-msg">{{ imageError }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="success-msg">{{ successMessage }}</p>
+    }
+
+    @if (errorMessage) {
+      <p class="error-msg">{{ errorMessage }}</p>
+    }
+  </form>
+</section>

@@ -1,2 +1,88 @@
-<h2>Quick Rent Available</h2>
-<p>All quick rental items will appear here.</p>
+<section class="rentals-page">
+  <div class="filter-strip">
+    <label class="pill">
+      <span>duration</span>
+      <select>
+        @for (option of durationOptions; track option) {
+          <option>{{ option }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="pill location-pill">
+      <span>location</span>
+      <input
+        type="search"
+        [ngModel]="selectedLocation"
+        (ngModelChange)="onLocationInput($event)"
+        (focus)="locationPanelOpen = locationSuggestions.length > 0"
+        (keydown.enter)="applySearch()"
+        autocomplete="off"
+      />
+      @if (locationPanelOpen) {
+        <div class="location-suggestions">
+          @for (suggestion of locationSuggestions; track suggestion) {
+            <button type="button" (click)="chooseLocation(suggestion)">
+              {{ suggestion }}
+            </button>
+          }
+        </div>
+      }
+    </label>
+  </div>
+
+  <div class="category-row">
+    @for (filter of quickFilters; track filter.label) {
+      <article class="category-card">
+        <span class="category-icon">
+          <img [src]="filter.icon" [alt]="filter.label" loading="lazy" decoding="async" />
+        </span>
+        <span>{{ filter.label }}</span>
+      </article>
+    }
+  </div>
+
+  <div class="search-bar">
+    <input
+      type="search"
+      [(ngModel)]="searchTerm"
+      (keydown.enter)="applySearch()"
+      placeholder="Find hostels, flats, apartments, villas..."
+    />
+    <button type="button" (click)="applySearch()">Go</button>
+  </div>
+
+  <div class="breadcrumbs">Home/Rentals/Accommodation in {{ selectedLocation }}</div>
+
+  @if (listings.length) {
+  <section class="listing-grid">
+    @for (listing of listings; track listing.id) {
+      <a class="listing-card" [routerLink]="['/rentals', listing.id]">
+        <img [src]="listing.image" [alt]="listing.title" loading="lazy" decoding="async" />
+
+        <div class="listing-content">
+          <div class="price-row">
+            <p class="price">Rs {{ listing.price }}<span>{{ listing.unit }}</span></p>
+            <span class="listing-status">{{ listing.status || 'AVAILABLE' }}</span>
+            <div class="stars" aria-label="Property rating">
+              @for (filled of stars(listing.rating); track $index) {
+                <span [class.filled]="filled">&#9733;</span>
+              }
+            </div>
+          </div>
+
+          <h2>{{ listing.title }}</h2>
+          <p>{{ listing.summary }}</p>
+          <small>Daily Rs {{ listing.dailyPrice }} | Weekly Rs {{ listing.weeklyPrice || listing.dailyPrice * 6 }}</small>
+        </div>
+      </a>
+    }
+  </section>
+  } @else {
+    <section class="empty-listings">
+      <h2>No rentals found for {{ selectedLocation }}</h2>
+      <p>Try a nearby locality, remove the keyword, or publish the first property in this location.</p>
+      <a routerLink="/publish-property">List property</a>
+    </section>
+  }
+</section>
