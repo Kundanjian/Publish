@@ -13,9 +13,6 @@
 
       <label>
         <span>Password</span>
-//HEAD
-        <input type="password" placeholder="Enter password" formControlName="password" autocomplete="current-password" />
-//
         <div class="password-field">
           <input
             [type]="showPassword ? 'text' : 'password'"
@@ -31,7 +28,6 @@
             <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
           </button>
         </div>
-//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
       </label>
 
       @if (errorMessage) {
