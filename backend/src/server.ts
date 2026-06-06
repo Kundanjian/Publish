@@ -4,12 +4,9 @@ import { env } from './config/env';
 import { prisma } from './config/prisma';
 import { adminRouter } from './routes/admin.routes';
 import { authRouter } from './routes/auth.routes';
-//HEAD
 import { bookingRouter } from './routes/booking.routes';
 import { locationRouter } from './routes/location.routes';
-//
 import { metaRouter } from './routes/meta.routes';
-//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 import { propertyRouter } from './routes/property.routes';
 import { userRouter } from './routes/user.routes';
 import { globalLimiter } from './middleware/rate-limit.middleware';
@@ -48,12 +45,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/properties', propertyRouter);
-//HEAD
 app.use('/api/bookings', bookingRouter);
 app.use('/api/locations', locationRouter);
-//
 app.use('/api/meta', metaRouter);
-//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
 
 app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(error);

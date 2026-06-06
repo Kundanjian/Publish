@@ -82,7 +82,6 @@ export class MyOrdersComponent implements OnInit {
     }
 
     return 'Request timed out quickly. Please try again.';
-//7f9ea7109b049d12a3c0d98ac96604b20594d1a6
   }
 }
 
