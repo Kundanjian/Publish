@@ -1,0 +1,307 @@
+<header class="navbar" [class.navbar-hidden]="navbarHidden">
+  <div class="nav-top">
+    <div class="nav-left">
+      <button type="button" class="menu-btn" aria-label="Open menu" (click)="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="brand" routerLink="/" (click)="closeMenu()">
+        <img src="/unio-logo-transparent.png" alt="Unio logo" class="brand-logo" />
+      </a>
+    </div>
+
+    <div class="nav-filters" aria-label="Primary filters">
+      <label class="nav-filter">
+        <span>Duration</span>
+        <select>
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+        </select>
+      </label>
+
+      <label class="nav-filter location-search">
+        <span>Location</span>
+        <input
+          type="search"
+          [ngModel]="locationQuery"
+          (ngModelChange)="onLocationInput($event)"
+          (focus)="locationPanelOpen = locationSuggestions.length > 0"
+          (keydown.enter)="searchSelectedLocation()"
+          placeholder="Type city or locality"
+          autocomplete="off"
+        />
+        @if (locationPanelOpen) {
+          <div class="location-suggestions">
+            @for (suggestion of locationSuggestions; track suggestion) {
+              <button type="button" (mousedown)="chooseLocation(suggestion)">{{ suggestion }}</button>
+            }
+          </div>
+        }
+      </label>
+
+      <button
+        type="button"
+        class="current-location-btn"
+        [disabled]="isFetchingLocation"
+        (click)="useCurrentLocation()"
+        [attr.aria-label]="isFetchingLocation ? 'Fetching location…' : 'Use current location'"
+        title="Use current location"
+      >
+        @if (isFetchingLocation) {
+          <span class="loc-spinner"></span>
+        } @else {
+          <span class="material-icons loc-icon">my_location</span>
+        }
+      </button>
+
+      <button type="button" class="nav-search-btn" aria-label="Search rentals" (click)="searchSelectedLocation()">
+        <span class="material-icons">search</span>
+      </button>
+    </div>
+
+    <div class="nav-right">
+      <button
+        type="button"
+        class="theme-toggle"
+        [class.theme-dark]="theme === 'dark'"
+        [attr.aria-label]="theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'"
+        (click)="toggleTheme()"
+      >
+        @if (theme === 'light') {
+          <span class="material-icons theme-icon">light_mode</span>
+          <span class="theme-char">L</span>
+        } @else {
+          <span class="material-icons theme-icon">dark_mode</span>
+          <span class="theme-char">D</span>
+        }
+      </button>
+
+      <div class="auth-actions">
+        @if (isLoggedIn()) {
+          <a routerLink="/dashboard" class="ghost-btn" (click)="closeMenu()">Dashboard</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
+          <button type="button" class="danger-btn" (click)="logout()">Logout</button>
+        } @else {
+          <a routerLink="/login" class="ghost-btn" (click)="closeMenu()">Log in</a>
+          <a routerLink="/publish-property" class="ghost-btn" (click)="closeMenu()">List property</a>
+          <a routerLink="/signup" class="primary-btn" (click)="closeMenu()">Register</a>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (isHomePage) {
+    <!-- Peek bar -->
+    <div
+      class="booking-peek"
+      [class.booking-peek-visible]="bookingHidden"
+      (click)="expandBooking()"
+      role="button"
+      tabindex="0"
+      aria-label="Expand booking bar"
+      (keydown.enter)="expandBooking()"
+      (keydown.space)="expandBooking()"
+    >
+      <span class="peek-summary">
+        <span class="peek-icon">🔍</span>
+        <span class="peek-location">{{ selectedLocation || 'Search rentals' }}</span>
+        <span class="peek-divider">·</span>
+        <span class="peek-label">Tap to expand filters</span>
+      </span>
+      <span class="peek-chevron">&#x25BC;</span>
+    </div>
+
+    <!-- Full booking shell -->
+    <div class="booking-shell" [class.booking-shell-hidden]="bookingHidden">
+      <div class="booking-header">
+        <p class="booking-note">Book your ideal rental stay directly from landlords.</p>
+        <button type="button" class="booking-collapse-btn" (click)="collapseBooking()" title="Collapse" aria-label="Collapse booking bar">
+          <span>&#x25B2;</span>
+          <span class="collapse-label">Collapse</span>
+        </button>
+      </div>
+
+      <div class="booking-scroll" aria-label="Rental booking filters">
+        <div class="booking-bar">
+
+          <!-- Location -->
+          <div class="booking-field booking-field-location">
+            <span class="booking-label">Location</span>
+            <input
+              type="search"
+              [ngModel]="locationQuery"
+              (ngModelChange)="onLocationInput($event)"
+              (focus)="locationPanelOpen = locationSuggestions.length > 0"
+              (keydown.enter)="searchSelectedLocation()"
+              placeholder="City, locality or property"
+              autocomplete="off"
+            />
+            <small>{{ selectedLocation }}</small>
+          </div>
+
+          <!-- Guests -->
+          <div class="booking-field booking-field-guests" (click)="toggleGuestPanel()">
+            <span class="booking-label">Guests</span>
+            <div class="booking-field-value">{{ guestSummary }}</div>
+            <small>Adults &amp; children</small>
+
+            @if (guestPanelOpen) {
+              <div class="guest-panel" (click)="$event.stopPropagation()">
+                <div class="guest-row">
+                  <div class="guest-info">
+                    <span class="guest-type">Adults</span>
+                    <span class="guest-hint">Age 13+</span>
+                  </div>
+                  <div class="guest-counter">
+                    <button type="button" class="counter-btn" (click)="changeAdults(-1)" [disabled]="guestAdults === 0" aria-label="Decrease adults">−</button>
+                    <span class="counter-val">{{ guestAdults }}</span>
+                    <button type="button" class="counter-btn" (click)="changeAdults(1)" aria-label="Increase adults">+</button>
+                  </div>
+                </div>
+                <div class="guest-row">
+                  <div class="guest-info">
+                    <span class="guest-type">Children</span>
+                    <span class="guest-hint">Under 13</span>
+                  </div>
+                  <div class="guest-counter">
+                    <button type="button" class="counter-btn" (click)="changeChildren(-1)" [disabled]="guestChildren === 0" aria-label="Decrease children">−</button>
+                    <span class="counter-val">{{ guestChildren }}</span>
+                    <button type="button" class="counter-btn" (click)="changeChildren(1)" aria-label="Increase children">+</button>
+                  </div>
+                </div>
+                <button type="button" class="guest-done-btn" (click)="guestPanelOpen = false">Done</button>
+              </div>
+            }
+          </div>
+
+          <!-- Move-In -->
+          <div class="booking-field">
+            <span class="booking-label">Move-In</span>
+            <input
+              type="date"
+              class="booking-date-input"
+              [(ngModel)]="moveInDate"
+              [min]="todayIso"
+              (change)="onMoveInChange()"
+              aria-label="Move-in date"
+            />
+            <small>{{ formattedMoveIn || 'Select date' }}</small>
+          </div>
+
+          <!-- Move-Out -->
+          <div class="booking-field" [class.field-disabled]="flexibleMoveOut">
+            <span class="booking-label">Move-Out</span>
+            @if (!flexibleMoveOut) {
+              <input
+                type="date"
+                class="booking-date-input"
+                [(ngModel)]="moveOutDate"
+                [min]="moveOutMin"
+                [disabled]="!moveInDate"
+                aria-label="Move-out date"
+              />
+              <small>{{ formattedMoveOut || 'Select date' }}</small>
+            } @else {
+              <div class="booking-field-value flexible-tag">Flexible stay</div>
+              <small>Daily tariff applies</small>
+            }
+            <label class="flexible-toggle" (click)="$event.stopPropagation()">
+              <input type="checkbox" [ngModel]="flexibleMoveOut" (ngModelChange)="toggleFlexibleMoveOut()" />
+              <span>My move-out is flexible</span>
+            </label>
+          </div>
+
+          <!-- Stay Length (read-only) + Check-In Time -->
+          <div class="booking-field">
+            <span class="booking-label">Stay Length</span>
+            <div class="booking-field-value stay-length-val">{{ stayLength || '—' }}</div>
+            <small class="stay-hint">Auto-calculated</small>
+            <div class="checkin-time-wrap">
+              <label class="booking-label time-label">Check-In Time <span class="optional-tag">optional</span></label>
+              <select class="time-select" [(ngModel)]="checkInTime" aria-label="Expected check-in time">
+                <option value="">Any time</option>
+                @for (t of checkInTimes; track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="booking-cta-wrap">
+        <button type="button" class="booking-cta" (click)="searchSelectedLocation()">
+          <span class="material-icons">search</span>
+          Search
+        </button>
+      </div>
+    </div>
+  }
+</header>
+
+@if (menuOpen) {
+  <button type="button" class="menu-backdrop" aria-label="Close menu" (click)="closeMenu()"></button>
+
+  <aside class="menu-drawer">
+
+    <!-- ── Drawer profile head ──────────────────────────────────────────── -->
+    @if (isLoggedIn()) {
+      <!-- Logged-in profile -->
+      <div class="drawer-head drawer-head-auth">
+        <div class="avatar avatar-auth">{{ userInitial() }}</div>
+        <div class="drawer-user-info">
+          <p class="drawer-greeting">{{ greeting() }}, {{ userName() }}</p>
+          @if (userEmail()) {
+            <p class="drawer-contact">{{ userEmail() }}</p>
+          }
+          @if (userPhone()) {
+            <p class="drawer-contact">{{ userPhone() }}</p>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Guest / unauthenticated -->
+      <div class="drawer-head drawer-head-guest">
+        <p class="drawer-wave">👋 {{ greeting() }}</p>
+        <p class="drawer-welcome">Welcome to Unio Rentals</p>
+        <p class="drawer-pitch">Login or Register to:</p>
+        <ul class="drawer-pitch-list">
+          <li>Save favourites</li>
+          <li>Book properties faster</li>
+          <li>Track your bookings</li>
+          <li>Manage your listings</li>
+        </ul>
+        <div class="drawer-auth-ctas">
+          <a routerLink="/login" class="drawer-cta-login" (click)="closeMenu()">Log In</a>
+          <a routerLink="/signup" class="drawer-cta-register" (click)="closeMenu()">Register</a>
+        </div>
+      </div>
+    }
+
+    <!-- ── Nav links ────────────────────────────────────────────────────── -->
+    <nav class="drawer-links">
+      <a routerLink="/" (click)="closeMenu()">Home</a>
+      @if (isLoggedIn()) {
+        <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
+      }
+      <a routerLink="/quick-rent" (click)="closeMenu()">Accommodation</a>
+      <a routerLink="/publish-property" (click)="closeMenu()">List property</a>
+      <a routerLink="/coins" (click)="closeMenu()">
+        Unio Coins
+        <span class="coin-pill">{{ userCoins() }}</span>
+      </a>
+      <a routerLink="/orders" (click)="closeMenu()">My Orders</a>
+      <button type="button" class="drawer-install" (click)="installMobileApp()">
+        @if (installingApp) { Installing… }
+        @else if (isPwaInstalled()) { Unio App Installed }
+        @else { Install Unio Mobile App }
+      </button>
+      <a routerLink="/help" (click)="closeMenu()">Help</a>
+      <a routerLink="/settings" (click)="closeMenu()">Settings</a>
+      @if (isLoggedIn()) {
+        <button type="button" class="drawer-logout" (click)="logout()">Log out</button>
+      }
+    </nav>
+  </aside>
+}

@@ -1,0 +1,20 @@
+@if (showPrompt) {
+  <div class="location-overlay">
+    <article class="location-card">
+      <h2>Allow location access</h2>
+      <p>
+        We use your location to show nearby rental options and improve local recommendations.
+      </p>
+      @if (statusMessage) {
+        <p class="location-status">{{ statusMessage }}</p>
+      }
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="dismissPrompt()">Not now</button>
+        <button type="button" class="primary" [disabled]="isFetching" (click)="allowLocation()">
+          {{ isFetching ? 'Fetching...' : 'Allow location' }}
+        </button>
+      </div>
+    </article>
+  </div>
+}
