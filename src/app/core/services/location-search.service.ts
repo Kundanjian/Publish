@@ -1,6 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
+<<<<<<< HEAD
 import { Observable, catchError, map, of, switchMap, timeout } from 'rxjs';
+=======
+import { Observable, catchError, map, of, timeout } from 'rxjs';
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 
 @Injectable({ providedIn: 'root' })
 export class LocationSearchService {
@@ -15,7 +19,11 @@ export class LocationSearchService {
 
   setSelectedLocation(location: string): void {
     const normalized = location.trim();
+<<<<<<< HEAD
     if (!normalized || normalized === 'Current location') {
+=======
+    if (!normalized) {
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       return;
     }
 
@@ -23,6 +31,7 @@ export class LocationSearchService {
     this.selectedLocationSignal.set(normalized);
   }
 
+<<<<<<< HEAD
   /**
    * Resolves GPS coordinates → human-readable location string.
    * Strategy:
@@ -53,16 +62,30 @@ export class LocationSearchService {
         return this.reverseGeocodeNominatim(latitude, longitude);
       }),
       catchError(() => this.reverseGeocodeNominatim(latitude, longitude))
+=======
+  useCurrentCoordinates(latitude: number, longitude: number): Observable<string> {
+    const params = new HttpParams().set('lat', latitude).set('lng', longitude);
+
+    return this.http.get<{ suggestions: string[] }>('/api/locations/suggest', { params }).pipe(
+      timeout(3500),
+      map((response) => response.suggestions[0] || 'Current location'),
+      catchError(() => of('Current location'))
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     );
   }
 
   suggestLocations(query: string): Observable<string[]> {
+<<<<<<< HEAD
     const trimmedQuery = query.trim();
     const params = new HttpParams().set('query', trimmedQuery);
+=======
+    const params = new HttpParams().set('query', query.trim());
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 
     return this.http.get<{ suggestions: string[] }>('/api/locations/suggest', { params }).pipe(
       timeout(2500),
       map((response) => response.suggestions),
+<<<<<<< HEAD
       catchError(() => of(this.localSuggestions(trimmedQuery)))
     );
   }
@@ -122,6 +145,12 @@ export class LocationSearchService {
       : result.display_name?.split(',').slice(0, 2).join(',').trim() || 'Jabalpur, Madhya Pradesh';
   }
 
+=======
+      catchError(() => of(this.localSuggestions(query)))
+    );
+  }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   private localSuggestions(query: string): string[] {
     const options = [
       'Jabalpur, Madhya Pradesh',
@@ -140,6 +169,7 @@ export class LocationSearchService {
       .slice(0, 8);
   }
 }
+<<<<<<< HEAD
 
 interface NominatimAddress {
   suburb?: string;
@@ -158,3 +188,5 @@ interface NominatimResult {
   display_name?: string;
   address?: NominatimAddress;
 }
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0

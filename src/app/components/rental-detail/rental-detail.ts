@@ -4,7 +4,10 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PropertyApiService } from '../../core/services/property-api.service';
 import { AuthApiService } from '../../core/services/auth-api.service';
+<<<<<<< HEAD
 import { EnquiryApiService } from '../../core/services/enquiry-api.service';
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 import {
   facilityList,
   feedbackNotes,
@@ -24,17 +27,24 @@ export class RentalDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly propertyApi = inject(PropertyApiService);
   private readonly authApi = inject(AuthApiService);
+<<<<<<< HEAD
   private readonly enquiryApi = inject(EnquiryApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
 
+=======
+  private readonly changeDetector = inject(ChangeDetectorRef);
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   listing = rentalListings[0];
   readonly relatedListings = rentalListings.slice(0, 4);
   readonly landlordRules = landlordRules;
   readonly facilities = facilityList;
   readonly feedbackNotes = feedbackNotes;
   private readonly starCache = new Map<number, boolean[]>();
+<<<<<<< HEAD
 
   // Booking form
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   bookingForm = {
     tenantName: 'Demo Tenant',
     tenantEmail: 'tenant@unio.test',
@@ -44,6 +54,7 @@ export class RentalDetailComponent implements OnInit {
   bookingMessage = '';
   bookingError = '';
   isBooking = false;
+<<<<<<< HEAD
   confirmedBooking: {
     id: string;
     amount: number;
@@ -69,6 +80,16 @@ export class RentalDetailComponent implements OnInit {
     { value: 'phone', label: '📞 Phone' },
     { value: 'whatsapp', label: '💬 WhatsApp' },
   ];
+=======
+  confirmedBooking:
+    | {
+        id: string;
+        amount: number;
+        invoiceNo: string;
+        landlordContact: { name: string; phone: string; email: string };
+      }
+    | null = null;
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 
   ngOnInit(): void {
     const currentUser = this.authApi.currentUser();
@@ -104,6 +125,7 @@ export class RentalDetailComponent implements OnInit {
         Array.from({ length: 5 }, (_, index) => index < rating)
       );
     }
+<<<<<<< HEAD
     return this.starCache.get(rating) ?? [];
   }
 
@@ -158,6 +180,12 @@ export class RentalDetailComponent implements OnInit {
     });
   }
 
+=======
+
+    return this.starCache.get(rating) ?? [];
+  }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   get selectedDurationDays(): number {
     const start = new Date(this.bookingForm.startDate).getTime();
     const end = new Date(this.bookingForm.endDate).getTime();
@@ -167,9 +195,25 @@ export class RentalDetailComponent implements OnInit {
 
   get estimatedAmount(): number {
     const days = this.selectedDurationDays;
+<<<<<<< HEAD
     if (!days) return 0;
     if (days >= 28) return Math.ceil(days / 30) * this.listing.price;
     if (days >= 7) return Math.ceil(days / 7) * (this.listing.weeklyPrice || this.listing.dailyPrice * 6);
+=======
+
+    if (!days) {
+      return 0;
+    }
+
+    if (days >= 28) {
+      return Math.ceil(days / 30) * this.listing.price;
+    }
+
+    if (days >= 7) {
+      return Math.ceil(days / 7) * (this.listing.weeklyPrice || this.listing.dailyPrice * 6);
+    }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     return days * this.listing.dailyPrice;
   }
 
@@ -190,6 +234,7 @@ export class RentalDetailComponent implements OnInit {
     }
 
     this.isBooking = true;
+<<<<<<< HEAD
     this.propertyApi.createBooking({
       propertyId: Number(this.listing.id),
       tenantName: this.bookingForm.tenantName,
@@ -217,11 +262,45 @@ export class RentalDetailComponent implements OnInit {
         this.changeDetector.markForCheck();
       }
     });
+=======
+    this.propertyApi
+      .createBooking({
+        propertyId: Number(this.listing.id),
+        tenantName: this.bookingForm.tenantName,
+        tenantEmail: this.bookingForm.tenantEmail,
+        startDate: this.bookingForm.startDate,
+        endDate: this.bookingForm.endDate
+      })
+      .subscribe({
+        next: ({ message, booking }) => {
+          this.bookingMessage = message;
+          this.confirmedBooking = {
+            id: booking.id,
+            amount: booking.amount,
+            invoiceNo: booking.invoiceNo,
+            landlordContact: booking.landlordContact
+          };
+          this.isBooking = false;
+          this.changeDetector.markForCheck();
+        },
+        error: (error) => {
+          this.bookingError =
+            error?.status === 401
+              ? 'Please login before confirming a booking.'
+              : error?.error?.message || 'Unable to confirm booking right now.';
+          this.isBooking = false;
+          this.changeDetector.markForCheck();
+        }
+      });
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   }
 
   private toDateInput(date: Date): string {
     return date.toISOString().slice(0, 10);
   }
 }
+<<<<<<< HEAD
 
 export { RentalDetailComponent as RentalDetail };
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0

@@ -1,14 +1,23 @@
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+=======
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 import { LocationSearchService } from '../../core/services/location-search.service';
 import { PropertyApiService } from '../../core/services/property-api.service';
 import {
   discoveryTiles,
   durationOptions,
+<<<<<<< HEAD
   locationSuggestions as fallbackSuggestions,
+=======
+  locationSuggestions,
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   platformHighlights,
   quickFilters,
   rentalListings
@@ -17,11 +26,16 @@ import {
 @Component({
   selector: 'app-home',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, FormsModule, RouterModule],
+=======
+  imports: [CommonModule, RouterModule],
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+<<<<<<< HEAD
 export class HomeComponent implements OnInit, OnDestroy {
   private readonly propertyApi = inject(PropertyApiService);
   private readonly locationSearch = inject(LocationSearchService);
@@ -31,6 +45,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   private locationSub?: Subscription;
 
   readonly durationOptions = durationOptions;
+=======
+export class HomeComponent {
+  private readonly propertyApi = inject(PropertyApiService);
+  private readonly locationSearch = inject(LocationSearchService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  readonly durationOptions = durationOptions;
+  readonly locationSuggestions = locationSuggestions;
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   readonly quickFilters = quickFilters;
   listings = rentalListings;
   readonly discoveryTiles = discoveryTiles;
@@ -39,11 +61,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly selectedCity = this.locationSearch.selectedCity;
   private readonly starCache = new Map<number, boolean[]>();
 
+<<<<<<< HEAD
   selectedDuration = durationOptions[0] ?? 'Monthly';
   locationQuery = this.locationSearch.selectedLocation();
   locationSuggestions: string[] = [];
   showSuggestions = false;
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   private readonly listingsEffect = effect((onCleanup) => {
     const location = this.selectedLocation();
     const subscription = this.propertyApi.getProperties(location).subscribe({
@@ -55,6 +80,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     onCleanup(() => subscription.unsubscribe());
   });
 
+<<<<<<< HEAD
   ngOnInit(): void {
     this.locationSub = this.locationQuery$
       .pipe(
@@ -106,6 +132,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   stars(rating: number): boolean[] {
     if (!this.starCache.has(rating)) {
       this.starCache.set(

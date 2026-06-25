@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
+<<<<<<< HEAD
 import https from 'https';
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 import { marketplaceProperties } from '../data/marketplace.store';
 
 type KnownLocation = {
@@ -78,9 +81,12 @@ const knownLocations: KnownLocation[] = [
   }
 ];
 
+<<<<<<< HEAD
 // Threshold in degrees (~15 km) — if nearest known location is farther, use Nominatim
 const KNOWN_LOCATION_THRESHOLD_SQ = 0.04;
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 export const suggestLocations = async (req: Request, res: Response) => {
   const query = String(req.query.query || '').trim().toLowerCase();
   const lat = Number(req.query.lat);
@@ -92,6 +98,7 @@ export const suggestLocations = async (req: Request, res: Response) => {
   ]);
 
   if (Number.isFinite(lat) && Number.isFinite(lng)) {
+<<<<<<< HEAD
     // Sort known locations by proximity
     const sorted = [...knownLocations]
       .map((loc) => ({ loc, score: distanceScore(loc, lat, lng) }))
@@ -122,6 +129,14 @@ export const suggestLocations = async (req: Request, res: Response) => {
     // Fallback to nearest known locations
     const nearestLabels = sorted.slice(0, 6).map((item) => item.loc.label);
     return res.status(200).json({ suggestions: uniqueLocations(nearestLabels) });
+=======
+    const nearest = [...knownLocations]
+      .sort((a, b) => distanceScore(a, lat, lng) - distanceScore(b, lat, lng))
+      .slice(0, 6)
+      .map((location) => location.label);
+
+    return res.status(200).json({ suggestions: uniqueLocations(nearest) });
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   }
 
   if (!query) {
@@ -138,6 +153,7 @@ export const suggestLocations = async (req: Request, res: Response) => {
   return res.status(200).json({ suggestions });
 };
 
+<<<<<<< HEAD
 /**
  * Calls Nominatim reverse geocoding API to get a human-readable location.
  * Returns a "Locality, City, State" string or null on failure.
@@ -202,6 +218,8 @@ const reverseGeocodeNominatim = (lat: number, lng: number): Promise<string | nul
   });
 };
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 const uniqueLocations = (locations: string[]): string[] => {
   const seen = new Set<string>();
   return locations.filter((location) => {
@@ -219,10 +237,25 @@ const matchScore = (label: string, query: string): number => {
   const known = knownLocations.find((location) => normalize(location.label) === normalized);
   const aliasMatch = known?.aliases.some((alias) => alias.includes(query) || query.includes(alias));
 
+<<<<<<< HEAD
   if (normalized === query) return 100;
   if (normalized.startsWith(query)) return 80;
   if (aliasMatch) return 70;
   if (normalized.includes(query)) return 60;
+=======
+  if (normalized === query) {
+    return 100;
+  }
+  if (normalized.startsWith(query)) {
+    return 80;
+  }
+  if (aliasMatch) {
+    return 70;
+  }
+  if (normalized.includes(query)) {
+    return 60;
+  }
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 
   return query
     .split(/\s+/)

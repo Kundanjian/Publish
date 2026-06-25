@@ -6,6 +6,7 @@
   </div>
 
   <form class="publish-form" #publishForm="ngForm" novalidate (ngSubmit)="submitProperty(publishForm)">
+<<<<<<< HEAD
 
     <!-- ── Stepper ──────────────────────────────────────────────────────── -->
     <div class="stepper">
@@ -26,6 +27,13 @@
     <!-- ══════════════════════════════════════════════════════════════════
          STEP 1 — Basic Details
     ═══════════════════════════════════════════════════════════════════ -->
+=======
+    <div class="stepper">
+      <span [class.active]="currentStep === 1">1. Basic details</span>
+      <span [class.active]="currentStep === 2">2. Specifications</span>
+    </div>
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     @if (currentStep === 1) {
       <label>
         Property title
@@ -49,12 +57,20 @@
       </label>
 
       <label>
+<<<<<<< HEAD
         Monthly rent (₹)
+=======
+        Monthly rent
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
         <input type="number" name="price" [(ngModel)]="property.price" min="1" required />
       </label>
 
       <label>
+<<<<<<< HEAD
         Daily rent (₹)
+=======
+        Daily rent
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
         <input type="number" name="dailyPrice" [(ngModel)]="property.dailyPrice" min="1" required />
       </label>
 
@@ -99,6 +115,7 @@
         }
       </div>
 
+<<<<<<< HEAD
       <button type="button" class="wide" [class.ready-btn]="publishForm.valid" (click)="goToSpecifications(publishForm)">
         Next: Property Specifications →
       </button>
@@ -107,14 +124,34 @@
     <!-- ══════════════════════════════════════════════════════════════════
          STEP 2 — Specifications
     ═══════════════════════════════════════════════════════════════════ -->
+=======
+      <button
+        type="button"
+        class="wide"
+        [class.ready-btn]="publishForm.valid"
+        (click)="goToSpecifications(publishForm)"
+      >
+        Next: property specifications
+      </button>
+    }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     @if (currentStep === 2) {
       <fieldset class="wide option-panel">
         <legend>Basic things included</legend>
         <div class="check-grid">
           @for (facility of facilityOptions; track facility) {
             <label class="check-card">
+<<<<<<< HEAD
               <input type="checkbox" [checked]="hasSpecification(facility)"
                 (change)="toggleSpecification(facility, $any($event.target).checked)" />
+=======
+              <input
+                type="checkbox"
+                [checked]="hasSpecification(facility)"
+                (change)="toggleSpecification(facility, $any($event.target).checked)"
+              />
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
               <span>{{ facility }}</span>
             </label>
           }
@@ -127,6 +164,7 @@
           @for (addOn of addOnOptions; track addOn.name) {
             <div class="addon-card">
               <label class="check-card">
+<<<<<<< HEAD
                 <input type="checkbox" [checked]="!!selectedAddOn(addOn.name)"
                   (change)="toggleAddOn(addOn.name, $any($event.target).checked, addOn.charge)" />
                 <span>{{ addOn.name }}</span>
@@ -135,6 +173,24 @@
                 <input type="number" min="0" [name]="'addon' + addOn.name"
                   [ngModel]="selectedAddOn(addOn.name)?.charge"
                   (ngModelChange)="updateAddOnCharge(addOn.name, $event)" aria-label="Extra charge" />
+=======
+                <input
+                  type="checkbox"
+                  [checked]="!!selectedAddOn(addOn.name)"
+                  (change)="toggleAddOn(addOn.name, $any($event.target).checked, addOn.charge)"
+                />
+                <span>{{ addOn.name }}</span>
+              </label>
+              @if (selectedAddOn(addOn.name)) {
+                <input
+                  type="number"
+                  min="0"
+                  [name]="'addon' + addOn.name"
+                  [ngModel]="selectedAddOn(addOn.name)?.charge"
+                  (ngModelChange)="updateAddOnCharge(addOn.name, $event)"
+                  aria-label="Extra charge"
+                />
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
                 <label class="upload-btn addon-upload">
                   Add image
                   <input type="file" accept="image/*" (change)="addAddOnImage(addOn.name, $any($event.target).files)" />
@@ -167,12 +223,24 @@
           <input type="checkbox" name="foodAvailable" [(ngModel)]="property.foodAvailable" />
           <span>Landlord can provide food</span>
         </label>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
         @if (property.foodAvailable) {
           <div class="check-grid">
             @for (food of foodOptions; track food) {
               <label class="check-card">
+<<<<<<< HEAD
                 <input type="checkbox" [checked]="hasFoodOption(food)"
                   (change)="toggleFoodOption(food, $any($event.target).checked)" />
+=======
+                <input
+                  type="checkbox"
+                  [checked]="hasFoodOption(food)"
+                  (change)="toggleFoodOption(food, $any($event.target).checked)"
+                />
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
                 <span>{{ food }}</span>
               </label>
             }
@@ -191,6 +259,7 @@
         </select>
       </label>
 
+<<<<<<< HEAD
       <div class="form-actions wide">
         <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
         <button type="button" class="ready-btn" (click)="nextStep()">Next: Amenities →</button>
@@ -620,12 +689,15 @@
         </div>
       </div>
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       <div class="approval-note">
         <strong>Live listing</strong>
         <span>After submit, this property appears instantly at the top of rentals for the selected location.</span>
       </div>
 
       <div class="form-actions wide">
+<<<<<<< HEAD
         <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
         <button
           type="submit"
@@ -634,14 +706,38 @@
           [disabled]="isSubmitting || isSubmitted"
         >
           {{ isSubmitted ? '✓ Submitted' : isSubmitting ? 'Submitting…' : 'Publish Live Listing' }}
+=======
+        <button type="button" class="secondary-btn" (click)="goToBasics()">Back</button>
+        <button
+          type="submit"
+          [class.ready-btn]="publishForm.valid && !isSubmitted"
+          [class.submitted-btn]="isSubmitted"
+          [disabled]="isSubmitting || isSubmitted"
+        >
+          {{ isSubmitted ? 'Submitted' : isSubmitting ? 'Submitting...' : 'Publish live listing' }}
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
         </button>
       </div>
     }
 
+<<<<<<< HEAD
     <!-- ── Global messages ──────────────────────────────────────────────── -->
     @if (imageError)    { <p class="error-msg wide">{{ imageError }}</p> }
     @if (successMessage){ <p class="success-msg wide">{{ successMessage }}</p> }
     @if (errorMessage)  { <p class="error-msg wide">{{ errorMessage }}</p> }
 
+=======
+    @if (imageError) {
+      <p class="error-msg">{{ imageError }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="success-msg">{{ successMessage }}</p>
+    }
+
+    @if (errorMessage) {
+      <p class="error-msg">{{ errorMessage }}</p>
+    }
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   </form>
 </section>

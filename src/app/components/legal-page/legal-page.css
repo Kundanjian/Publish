@@ -1,6 +1,10 @@
 .legal-page {
   width: min(980px, calc(100% - 32px));
+<<<<<<< HEAD
   margin: 40px auto 64px;
+=======
+  margin: 120px auto 64px;
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   color: var(--text-strong);
 }
 

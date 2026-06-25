@@ -20,18 +20,31 @@
       </div>
 
       <div class="gallery-actions">
+<<<<<<< HEAD
         <button type="button" (click)="scrollToEnquiry()">ENQUIRE</button>
         <a href="#quick-rent-checkout">RENT NOW</a>
+=======
+        <button type="button">CONTACT</button>
+        <a href="#quick-rent-checkout">RENT</a>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       </div>
     </article>
 
     <article class="summary-card">
       <h1>{{ listing.title }}</h1>
+<<<<<<< HEAD
       <p class="property-chip">{{ listing.propertyType }} · Direct landlord listing · {{ listing.location }}</p>
 
       <div class="rating-row">
         <span class="score">4.38 stars</span>
         <span class="meta">3,150 Ratings &amp; 218 Reviews</span>
+=======
+      <p class="property-chip">{{ listing.propertyType }} - Direct landlord listing - {{ listing.location }}</p>
+
+      <div class="rating-row">
+        <span class="score">4.38 stars</span>
+        <span class="meta">3150 Ratings &amp; 218 Reviews</span>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       </div>
 
       <div class="stars" aria-label="Listing rating">
@@ -40,6 +53,7 @@
         }
       </div>
 
+<<<<<<< HEAD
       <div class="price-band">
         <div class="price-item">
           <span class="price-label">Daily</span>
@@ -55,13 +69,23 @@
         </div>
       </div>
 
+=======
+      <p class="day-price">Rs {{ listing.dailyPrice }}/day</p>
+      <p class="week-price">Rs {{ listing.weeklyPrice || listing.dailyPrice * 6 }}/week</p>
+      <p class="month-price">Rs {{ listing.price }}{{ listing.unit }}</p>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       <p class="availability-chip">
         {{ listing.status || 'AVAILABLE' }} from {{ listing.availableFrom || 'today' }}
       </p>
 
       <p class="description">
+<<<<<<< HEAD
         This listing helps tenants review facilities, understand landlord rules,
         check suitability, and compare daily, weekly and monthly pricing before booking.
+=======
+        This listing helps tenants go deeper before they rent: review facilities, understand what the landlord allows,
+        check stay suitability for family, bachelors or professionals, and compare daily, weekly and monthly pricing.
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       </p>
 
       <h2>What this landlord allows</h2>
@@ -82,13 +106,18 @@
         <h2>Paid add-ons</h2>
         <ul class="highlights">
           @for (addOn of listing.addOns; track addOn.name) {
+<<<<<<< HEAD
             <li>{{ addOn.name }} — Rs {{ addOn.charge }} extra</li>
+=======
+            <li>{{ addOn.name }} for Rs {{ addOn.charge }} extra</li>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
           }
         </ul>
       }
     </article>
   </section>
 
+<<<<<<< HEAD
   <!-- ── Enquiry Panel ────────────────────────────────────────────────────── -->
   <section class="enquiry-panel" id="enquiry-section">
     <div class="enquiry-header">
@@ -228,6 +257,8 @@
   </section>
 
   <!-- ── Quick Rent Checkout ─────────────────────────────────────────────── -->
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   <section class="checkout-panel" id="quick-rent-checkout">
     <div>
       <p class="eyebrow">Quick rent checkout</p>
@@ -316,7 +347,11 @@
   </section>
 
   <section class="details-table">
+<<<<<<< HEAD
     <h3>Property details</h3>
+=======
+    <h3>Details</h3>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     <div class="spec-grid">
       <div><span>Type</span><strong>Residential rent</strong></div>
       <div><span>Property type</span><strong>{{ listing.propertyType }}</strong></div>
@@ -324,6 +359,7 @@
       <div><span>Bathrooms</span><strong>1</strong></div>
       <div><span>Furnishing</span><strong>Semi-furnished</strong></div>
       <div><span>Listed by</span><strong>Landlord</strong></div>
+<<<<<<< HEAD
       <div><span>Super builtup area</span><strong>750 sq ft</strong></div>
       <div><span>Carpet area</span><strong>750 sq ft</strong></div>
       <div><span>Bachelors allowed</span><strong>Yes</strong></div>
@@ -334,6 +370,18 @@
       <div><span>Distance</span><strong>{{ listing.landmarkDistance || 'Ask via enquiry' }}</strong></div>
       <div><span>Food</span><strong>{{ listing.foodAvailable ? (listing.foodOptions?.join(', ') || 'Available') : 'Not included' }}</strong></div>
       <div><span>Entry rule</span><strong>{{ listing.entryRule || 'Ask via enquiry' }}</strong></div>
+=======
+      <div><span>Super Builtup area (sq ft)</span><strong>750</strong></div>
+      <div><span>Carpet Area (sq ft)</span><strong>750</strong></div>
+      <div><span>Bachelors Allowed</span><strong>Yes</strong></div>
+      <div><span>Maintenance (monthly)</span><strong>No</strong></div>
+      <div><span>Stay duration</span><strong>Daily / Weekly / Monthly</strong></div>
+      <div><span>Feedback checked</span><strong>Yes</strong></div>
+      <div><span>Nearby landmark</span><strong>{{ listing.nearbyLandmark || 'Ask landlord' }}</strong></div>
+      <div><span>Distance</span><strong>{{ listing.landmarkDistance || 'Ask landlord' }}</strong></div>
+      <div><span>Food</span><strong>{{ listing.foodAvailable ? (listing.foodOptions?.join(', ') || 'Available') : 'Not included' }}</strong></div>
+      <div><span>Entry rule</span><strong>{{ listing.entryRule || 'Ask landlord' }}</strong></div>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     </div>
   </section>
 

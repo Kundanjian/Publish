@@ -14,12 +14,16 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+<<<<<<< HEAD
 // ─── OTP ──────────────────────────────────────────────────────────────────────
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 export const sendRegistrationOtp = async (email: string, otpCode: string, expiresInMinutes: number) => {
   await transporter.sendMail({
     from: `${env.SMTP_FROM} <${env.FROM_EMAIL}>`,
     to: email,
+<<<<<<< HEAD
     subject: 'Unio — Your registration OTP',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; line-height: 1.6; color: #1c2229;">
@@ -186,6 +190,16 @@ export const sendEnquiryApprovedToLister = async (payload: EnquiryListerPayload)
         <div style="padding: 16px 28px; background: #f8fafc; border: 1px solid #e0e8f0; border-top: 0; border-radius: 0 0 12px 12px;">
           <p style="margin: 0; font-size: 12px; color: #9ca3af;">Unio Rentals • Direct landlord platform • <a href="https://unio.app" style="color: #1d4ed8;">unio.app</a></p>
         </div>
+=======
+    subject: 'Unio registration OTP',
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Your OTP for registration</h2>
+        <p>Use this OTP to complete your registration:</p>
+        <p style="font-size: 26px; font-weight: 800; letter-spacing: 4px;">${otpCode}</p>
+        <p>This OTP will expire in ${expiresInMinutes} minutes.</p>
+        <p>If you did not request this, please ignore this email.</p>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       </div>
     `
   });

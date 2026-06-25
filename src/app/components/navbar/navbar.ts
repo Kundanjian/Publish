@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { Component, HostListener, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+=======
+import { Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
@@ -26,23 +30,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private removeScrollListener?: () => void;
   private lastScrollY = 0;
   private scrollTicking = false;
+<<<<<<< HEAD
   private manuallyCollapsed = false;
 
   // ── Nav state ──────────────────────────────────────────────────────────────
+=======
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   menuOpen = false;
   isHomePage = true;
   bookingHidden = false;
   navbarHidden = false;
+<<<<<<< HEAD
   theme: 'light' | 'dark' = 'light';
   mobileAppUrl = 'https://play.google.com/store/apps/details?id=com.unio.mobile';
   installingApp = false;
 
   // ── Location ───────────────────────────────────────────────────────────────
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   selectedLocation = this.locationSearch.selectedLocation();
   locationQuery = this.selectedLocation;
   locationSuggestions: string[] = [];
   locationPanelOpen = false;
   isFetchingLocation = false;
+<<<<<<< HEAD
 
   // ── Booking widget state ───────────────────────────────────────────────────
   guestAdults = 1;
@@ -68,11 +80,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ];
 
   // ── Auth ───────────────────────────────────────────────────────────────────
+=======
+  theme: 'light' | 'dark' = 'light';
+  mobileAppUrl = 'https://play.google.com/store/apps/details?id=com.unio.mobile';
+  installingApp = false;
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   readonly currentUser = this.authService.currentUser;
   readonly isLoggedIn = this.authService.isLoggedIn;
   readonly canInstallPwa = this.pwaInstallService.canInstall;
   readonly isPwaInstalled = this.pwaInstallService.isInstalled;
 
+<<<<<<< HEAD
   // ── Computed getters ───────────────────────────────────────────────────────
   get todayIso(): string {
     return new Date().toISOString().split('T')[0];
@@ -114,6 +132,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   ngOnInit(): void {
     this.pwaInstallService.init();
 
@@ -128,6 +148,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.authService.syncProfile().subscribe();
     }
 
+<<<<<<< HEAD
+=======
+    this.authService.getMobileAppInstallUrl().subscribe((url) => {
+      this.mobileAppUrl = url;
+    });
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     this.updateRouteState(this.router.url);
     this.routeSubscription = this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -159,6 +186,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.removeScrollListener?.();
   }
 
+<<<<<<< HEAD
   // ── Close panels on outside click ─────────────────────────────────────────
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: MouseEvent): void {
@@ -172,12 +200,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // ── Theme ──────────────────────────────────────────────────────────────────
+=======
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   toggleTheme(): void {
     this.theme = this.theme === 'light' ? 'dark' : 'light';
     localStorage.setItem('unio-theme', this.theme);
     this.applyTheme();
   }
 
+<<<<<<< HEAD
   // ── Menu ───────────────────────────────────────────────────────────────────
   toggleMenu(): void { this.menuOpen = !this.menuOpen; }
   closeMenu(): void  { this.menuOpen = false; }
@@ -223,6 +258,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // ── Location ───────────────────────────────────────────────────────────────
+=======
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   onLocationInput(value: string): void {
     this.locationQuery = value;
     this.locationQuery$.next(value);
@@ -272,6 +313,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.locationQuery.trim()) {
       this.chooseLocation(this.locationQuery);
     }
+<<<<<<< HEAD
     this.closeMenu();
     const params: Record<string, string> = { location: this.selectedLocation };
     if (this.flexibleMoveOut) params['flexible'] = 'true';
@@ -285,6 +327,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // ── Auth ───────────────────────────────────────────────────────────────────
+=======
+
+    this.closeMenu();
+    this.router.navigate(['/quick-rent'], {
+      queryParams: { location: this.selectedLocation }
+    });
+  }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   logout(): void {
     this.authService.logout();
     this.closeMenu();
@@ -292,11 +343,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   async installMobileApp(): Promise<void> {
+<<<<<<< HEAD
     if (this.installingApp) return;
+=======
+    if (this.installingApp) {
+      return;
+    }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     this.installingApp = true;
     try {
       const result = await this.pwaInstallService.promptInstall();
       this.closeMenu();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       if (result === 'unavailable') {
         window.open(this.mobileAppUrl, '_blank', 'noopener');
       }
@@ -305,6 +367,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
+<<<<<<< HEAD
   // ── Drawer profile helpers ─────────────────────────────────────────────────
   greeting(): string {
     const h = new Date().getHours();
@@ -329,12 +392,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   userPhone(): string {
     return this.currentUser()?.phone?.trim() || '';
+=======
+  userInitial(): string {
+    const name = this.currentUser()?.name.trim();
+    return name ? name[0].toUpperCase() : 'U';
+  }
+
+  userName(): string {
+    return this.currentUser()?.name || 'Guest';
+  }
+
+  userContact(): string {
+    const user = this.currentUser();
+    return user?.phone || user?.email || 'mobile or mail';
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   }
 
   userCoins(): number {
     return this.currentUser()?.unioCoins ?? 0;
   }
 
+<<<<<<< HEAD
   // ── Private ────────────────────────────────────────────────────────────────
   private formatDate(iso: string): string {
     if (!iso) return '';
@@ -342,6 +420,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
   private applyTheme(): void {
     document.documentElement.setAttribute('data-theme', this.theme);
   }
@@ -349,18 +429,29 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private updateRouteState(url: string): void {
     const path = url.split('?')[0].split('#')[0];
     this.isHomePage = path === '/';
+<<<<<<< HEAD
     this.manuallyCollapsed = false;
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     this.bookingHidden = false;
     this.navbarHidden = false;
     this.lastScrollY = typeof window === 'undefined' ? 0 : window.scrollY;
   }
 
   private scheduleScrollUpdate(): void {
+<<<<<<< HEAD
     if (this.scrollTicking) return;
+=======
+    if (this.scrollTicking || !this.isHomePage) {
+      return;
+    }
+
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
     this.scrollTicking = true;
     requestAnimationFrame(() => {
       this.scrollTicking = false;
       const currentScrollY = window.scrollY;
+<<<<<<< HEAD
       this.lastScrollY = Math.max(currentScrollY, 0);
       if (!this.isHomePage) return;
       const collapseThreshold = Math.max(window.innerHeight * 0.07, 56);
@@ -369,6 +460,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.zone.run(() => {
           this.bookingHidden = shouldHide;
           this.navbarHidden = false;
+=======
+      const nextHidden = currentScrollY > this.lastScrollY && currentScrollY > 80;
+      this.lastScrollY = Math.max(currentScrollY, 0);
+
+      if (nextHidden !== this.bookingHidden) {
+        this.zone.run(() => {
+          this.bookingHidden = nextHidden;
+          this.navbarHidden = nextHidden;
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
         });
       }
     });

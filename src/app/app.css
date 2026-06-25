@@ -1,6 +1,10 @@
 .app-shell {
+<<<<<<< HEAD
   min-height: calc(100vh - 60px);
   contain: layout style;
+=======
+  min-height: calc(100vh - 76px);
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 }
 
 .site-footer {

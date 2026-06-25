@@ -24,13 +24,18 @@
       <div class="selector-grid">
         <label class="field-card">
           <span>duration</span>
+<<<<<<< HEAD
           <select [(ngModel)]="selectedDuration">
+=======
+          <select>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
             @for (option of durationOptions; track option) {
               <option>{{ option }}</option>
             }
           </select>
         </label>
 
+<<<<<<< HEAD
         <div class="field-card location-field-card">
           <span>location</span>
           <input
@@ -52,11 +57,26 @@
             </div>
           }
         </div>
+=======
+        <label class="field-card">
+          <span>location</span>
+          <select>
+            <option>{{ selectedLocation() }}</option>
+            @for (location of locationSuggestions; track location) {
+              <option>{{ location }}</option>
+            }
+          </select>
+        </label>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
       </div>
 
       <div class="category-row">
         @for (filter of quickFilters; track filter.label) {
+<<<<<<< HEAD
           <article class="category-card" (click)="searchByCategory(filter.label)" role="button" tabindex="0" (keydown.enter)="searchByCategory(filter.label)">
+=======
+          <article class="category-card">
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
             <span class="category-icon">
               <img [src]="filter.icon" [alt]="filter.label" loading="lazy" decoding="async" />
             </span>
@@ -65,6 +85,7 @@
         }
       </div>
 
+<<<<<<< HEAD
       <div class="search-bar">
         <span class="sr-only">Search</span>
         <span class="search-bar-text">Find rentals near {{ selectedCity() }}</span>
@@ -74,6 +95,17 @@
   </section>
 
   <div class="breadcrumbs">Home / Rentals / Accommodation in {{ selectedLocation() }}</div>
+=======
+      <label class="search-bar">
+        <span class="sr-only">Search</span>
+        <input type="text" [value]="'Find rentals near ' + selectedCity()" readonly />
+        <a routerLink="/quick-rent" [queryParams]="{ location: selectedLocation() }" aria-label="Search">Go</a>
+      </label>
+    </div>
+  </section>
+
+  <div class="breadcrumbs">Home/Rentals/Accommodation in {{ selectedLocation() }}</div>
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 
   @if (listings.length) {
   <section class="listing-grid">

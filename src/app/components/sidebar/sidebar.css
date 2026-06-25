@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 :host {
   display: block;
 }
+=======
+>>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
 .sidebar {
   width: 240px;
   height: calc(100vh - 60px);
