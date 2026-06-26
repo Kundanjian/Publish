@@ -47,10 +47,9 @@ model User {
   updatedAt       DateTime  @updatedAt
   properties      Property[] @relation("LandlordProperties")
   bookings        Booking[]  @relation("TenantBookings")
-<<<<<<< HEAD
+
   enquiries       Enquiry[]  @relation("UserEnquiries")
-=======
->>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
+
 }
 
 model RegistrationOtp {
@@ -157,7 +156,6 @@ model Invoice {
   total     Int
   issuedAt  DateTime @default(now())
 }
-<<<<<<< HEAD
 
 enum EnquiryStatus {
   PENDING
@@ -186,5 +184,3 @@ model Enquiry {
   @@index([propertyId])
   @@index([status])
 }
-=======
->>>>>>> 0fff56d389b464a5f54398abde9b0033e0e323a0
