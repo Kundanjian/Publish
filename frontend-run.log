@@ -1,0 +1,67 @@
+
+> unio-rentals-frontend@0.0.0 start
+> ng serve --proxy-config proxy.conf.json --host 0.0.0.0
+
+[1m[33m
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues.
+    [39m[22m
+[33m>[39m Building...
+[32m√[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m           [2m | [22m[1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m            [2m | [22m[36m72.74 kB[39m[2m | [22m
+[32mchunk-GLTAZ7YN.js[39m  [2m | [22m[2m-[22m               [2m | [22m [36m4.07 kB[39m[2m | [22m
+[32mchunk-Q2CVL7MI.js[39m  [2m | [22m[2m-[22m               [2m | [22m [36m2.69 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m          [2m | [22m [36m2.61 kB[39m[2m | [22m
+[32mchunk-GOMI4DH3.js[39m  [2m | [22m[2m-[22m               [2m | [22m [36m1.37 kB[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m   [2m | [22m[1m83.49 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m           [2m | [22m[1mRaw size[22m
+[32mchunk-SGFNM6EL.js[39m  [2m | [22m[2mpublish-property[22m[2m | [22m[36m60.47 kB[39m[2m | [22m
+[32mchunk-7RBCXTAK.js[39m  [2m | [22m[2mrental-detail[22m   [2m | [22m[36m53.94 kB[39m[2m | [22m
+[32mchunk-QUZKNGGG.js[39m  [2m | [22m[2mhome[22m            [2m | [22m[36m35.19 kB[39m[2m | [22m
+[32mchunk-I7OKDGWR.js[39m  [2m | [22m[2mquick-rent[22m      [2m | [22m[36m31.71 kB[39m[2m | [22m
+[32mchunk-5PG6CWXC.js[39m  [2m | [22m[2mdashboard[22m       [2m | [22m[36m24.13 kB[39m[2m | [22m
+[32mchunk-YWLZBCRD.js[39m  [2m | [22m[2msignup[22m          [2m | [22m[36m19.04 kB[39m[2m | [22m
+[32mchunk-6V5DH3TX.js[39m  [2m | [22m[2mlogin[22m           [2m | [22m[36m13.46 kB[39m[2m | [22m
+[32mchunk-3OWMZMNP.js[39m  [2m | [22m[2mmy-orders[22m       [2m | [22m[36m12.95 kB[39m[2m | [22m
+[32mchunk-2ZNBWKCM.js[39m  [2m | [22m[2madmin-login[22m     [2m | [22m[36m12.60 kB[39m[2m | [22m
+[32mchunk-7AW7ERLC.js[39m  [2m | [22m[2m-[22m               [2m | [22m[36m10.61 kB[39m[2m | [22m
+[32mchunk-VFRNYIU3.js[39m  [2m | [22m[2maccessories[22m     [2m | [22m [36m8.96 kB[39m[2m | [22m
+[32mchunk-A3X33CL2.js[39m  [2m | [22m[2m-[22m               [2m | [22m [36m8.12 kB[39m[2m | [22m
+[32mchunk-MB6PWMSV.js[39m  [2m | [22m[2munio-coins[22m      [2m | [22m [36m8.08 kB[39m[2m | [22m
+[32mchunk-UJIPFYD7.js[39m  [2m | [22m[2mhelp[22m            [2m | [22m [36m6.80 kB[39m[2m | [22m
+[32mchunk-DG7DOW3F.js[39m  [2m | [22m[2msettings[22m        [2m | [22m [36m6.75 kB[39m[2m | [22m
+
+Application bundle generation complete. [17.054 seconds] - 2026-05-30T20:07:02.783Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.14:[1m4200[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[1m[31m[2m1:38:13 am[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/locations/suggest?query=Ind[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)[39m[22m
+[1m[31m[2m1:38:13 am[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/properties?location=Ind[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)[39m[22m
+[1m[31m[2m1:39:04 am[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/properties?location=Current%20location[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)[39m[22m
+[1m[31m[2m1:39:04 am[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/locations/suggest?query=Current%20location[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)[39m[22m
+[1m[31m[2m2:16:21 am[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/locations/suggest?lat=22.7432895&lng=75.811111[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)[39m[22m

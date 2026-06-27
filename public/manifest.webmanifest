@@ -1,0 +1,23 @@
+{
+  "name": "Unio Rentals",
+  "short_name": "Unio",
+  "description": "Book hostels, flats, apartments and villas directly from landlords.",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#091019",
+  "theme_color": "#1d5eff",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

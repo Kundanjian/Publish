@@ -1,0 +1,132 @@
+:host {
+  display: block;
+}
+
+.auth-shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 76px);
+  padding: 32px 20px;
+  overflow: hidden;
+}
+
+.auth-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 22% 38%, rgba(235, 85, 85, 0.16), transparent 22%),
+    radial-gradient(circle at 76% 66%, rgba(20, 39, 71, 0.16), transparent 24%),
+    var(--auth-backdrop);
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+  padding: 40px 42px;
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.auth-kicker,
+.auth-switch {
+  margin: 0;
+  text-align: center;
+  color: var(--text-soft);
+}
+
+.auth-card h1 {
+  margin: 10px 0 24px;
+  text-align: center;
+  color: var(--text-strong);
+  font-size: clamp(2rem, 5vw, 3.1rem);
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-form span {
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.auth-form input {
+  width: 100%;
+  border: 2px solid var(--unio-border);
+  border-radius: 16px;
+  padding: 15px 16px;
+  background: var(--input-bg);
+  color: var(--text-strong);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 52px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.password-toggle .material-icons {
+  font-size: 1.25rem;
+}
+
+.error-msg {
+  margin: 0;
+  color: #b42318;
+  font-weight: 700;
+}
+
+.cta {
+  border: 0;
+  border-radius: 16px;
+  padding: 14px 20px;
+  background: var(--unio-blue-dark);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cta.ready-btn {
+  background: linear-gradient(90deg, var(--unio-blue-dark), var(--unio-blue));
+}
+
+.cta:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.auth-switch {
+  margin-top: 18px;
+}
+
+.auth-switch a {
+  color: #1b66aa;
+  font-weight: 700;
+  text-decoration: none;
+}

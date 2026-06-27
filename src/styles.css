@@ -1,0 +1,144 @@
+/* ─── CSS Variables ──────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --unio-blue: #0b88c7;
+  --unio-blue-dark: #1c567f;
+  --unio-blue-soft: #d9eef9;
+  --unio-border: #8fc0df;
+  --unio-orange: #f29a3a;
+  --unio-orange-dark: #d77a1c;
+  --unio-surface: #ffffff;
+  --unio-bg: #f4f8fc;
+  --unio-text: #2d4358;
+  --unio-muted: #6f8396;
+  --surface-raised: #ffffff;
+  --surface-soft: #f3f7fa;
+  --surface-subtle: #edf3f7;
+  --surface-accent: #f2f8fc;
+  --border-soft: #d9e8f2;
+  --border-strong: #b9d6e7;
+  --text-strong: #173758;
+  --text-soft: #6f8396;
+  --text-contrast: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #c8dff0;
+  --shadow-soft: 0 16px 36px rgba(17, 56, 96, 0.08);
+  --shadow-header: 0 2px 8px rgba(25, 61, 92, 0.08);
+  --overlay-bg: rgba(15, 23, 42, 0.28);
+  --auth-backdrop:
+    radial-gradient(circle at 30% 55%, rgba(245, 176, 120, 0.5), transparent 22%),
+    radial-gradient(circle at 38% 70%, rgba(132, 168, 187, 0.45), transparent 24%),
+    linear-gradient(180deg, #f7f9fb, #eef6ff);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --unio-blue: #5bb8f5;
+  --unio-blue-dark: #b8dcf8;
+  --unio-blue-soft: #0f2d48;
+  --unio-border: #274d6e;
+  --unio-orange: #ffb15c;
+  --unio-orange-dark: #dd8b2d;
+  --unio-surface: #0d1b2a;
+  --unio-bg: #080f18;
+  --unio-text: #cfe3f4;
+  --unio-muted: #7b9ab3;
+  --surface-raised: #0f1d2c;
+  --surface-soft: #111f2e;
+  --surface-subtle: #152334;
+  --surface-accent: #0e2035;
+  --border-soft: #1e3d58;
+  --border-strong: #275070;
+  --text-strong: #e8f4ff;
+  --text-soft: #8bafc8;
+  --text-contrast: #06111e;
+  --input-bg: #0b1825;
+  --input-border: #1e3d58;
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --shadow-header: 0 4px 16px rgba(0, 0, 0, 0.38);
+  --overlay-bg: rgba(2, 8, 16, 0.7);
+  --auth-backdrop:
+    radial-gradient(circle at 30% 55%, rgba(242, 154, 58, 0.18), transparent 22%),
+    radial-gradient(circle at 38% 70%, rgba(91, 184, 245, 0.14), transparent 24%),
+    linear-gradient(180deg, #07101a, #0b1928);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--unio-bg);
+  color: var(--unio-text);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.28s ease, color 0.28s ease;
+}
+
+body {
+  min-width: 320px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* ─── Global input / select dark-mode fix ────────────────────────────────── */
+/*
+  Browsers render native inputs with their own light background even inside
+  dark-themed pages unless we explicitly style them. These rules fix that
+  for every input/select across the app.
+*/
+input,
+select,
+textarea {
+  background-color: var(--input-bg);
+  color: var(--text-strong);
+  border-color: var(--input-border);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Chrome autofill override for dark mode */
+:root[data-theme='dark'] input:-webkit-autofill,
+:root[data-theme='dark'] input:-webkit-autofill:hover,
+:root[data-theme='dark'] input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+  -webkit-text-fill-color: var(--text-strong) !important;
+  caret-color: var(--text-strong);
+}
+
+/* Select arrow colour in dark mode */
+:root[data-theme='dark'] select {
+  color-scheme: dark;
+}
+
+a,
+button {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Placeholder colour */
+::placeholder {
+  color: var(--text-soft);
+  opacity: 1;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--unio-blue);
+  outline-offset: 2px;
+}

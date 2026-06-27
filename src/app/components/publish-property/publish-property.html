@@ -1,0 +1,647 @@
+<section class="publish-page">
+  <div class="page-head">
+    <p class="eyebrow">Landlord onboarding</p>
+    <h1>Publish a property for quick rent</h1>
+    <p>Submit property basics, specifications and landlord rules. New listings go live instantly and appear first.</p>
+  </div>
+
+  <form class="publish-form" #publishForm="ngForm" novalidate (ngSubmit)="submitProperty(publishForm)">
+
+    <!-- ── Stepper ──────────────────────────────────────────────────────── -->
+    <div class="stepper">
+      @for (label of stepLabels; track label; let i = $index) {
+        <button
+          type="button"
+          class="step-pill"
+          [class.step-active]="currentStep === i + 1"
+          [class.step-done]="currentStep > i + 1"
+          (click)="currentStep > i + 1 ? goToStep(i + 1) : null"
+        >
+          @if (currentStep > i + 1) { <span class="step-check">✓</span> }
+          {{ label }}
+        </button>
+      }
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 1 — Basic Details
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 1) {
+      <label>
+        Property title
+        <input type="text" name="title" [(ngModel)]="property.title" required minlength="3" />
+      </label>
+
+      <label>
+        Location
+        <input type="text" name="location" [(ngModel)]="property.location" required />
+      </label>
+
+      <label>
+        Property type
+        <select name="propertyType" [(ngModel)]="property.propertyType">
+          <option>Hostel</option>
+          <option>Flat</option>
+          <option>Apartment</option>
+          <option>Studio Apartment</option>
+          <option>Villa</option>
+        </select>
+      </label>
+
+      <label>
+        Monthly rent (₹)
+        <input type="number" name="price" [(ngModel)]="property.price" min="1" required />
+      </label>
+
+      <label>
+        Daily rent (₹)
+        <input type="number" name="dailyPrice" [(ngModel)]="property.dailyPrice" min="1" required />
+      </label>
+
+      <label>
+        Owner name
+        <input type="text" name="ownerName" [(ngModel)]="property.ownerName" required minlength="2" />
+      </label>
+
+      <label>
+        Owner phone
+        <input type="tel" name="ownerPhone" [(ngModel)]="property.ownerPhone" required minlength="8" />
+      </label>
+
+      <label>
+        Owner email
+        <input type="email" name="ownerEmail" [(ngModel)]="property.ownerEmail" required email />
+      </label>
+
+      <label class="wide">
+        Property summary
+        <textarea name="summary" rows="4" [(ngModel)]="property.summary" required minlength="10"></textarea>
+      </label>
+
+      <div class="wide upload-panel">
+        <div>
+          <strong>Property images</strong>
+          <span>Upload up to 8 images. Large photos are optimized before publishing.</span>
+        </div>
+        <label class="upload-btn">
+          Add property images
+          <input type="file" accept="image/*" multiple (change)="addPropertyImages($any($event.target).files)" />
+        </label>
+        @if (property.images.length) {
+          <div class="image-preview-grid">
+            @for (image of property.images; track image; let imageIndex = $index) {
+              <button type="button" class="image-preview" (click)="removePropertyImage(imageIndex)">
+                <img [src]="image" alt="Property preview" />
+                <span>Remove</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <button type="button" class="wide" [class.ready-btn]="publishForm.valid" (click)="goToSpecifications(publishForm)">
+        Next: Property Specifications →
+      </button>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 2 — Specifications
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 2) {
+      <fieldset class="wide option-panel">
+        <legend>Basic things included</legend>
+        <div class="check-grid">
+          @for (facility of facilityOptions; track facility) {
+            <label class="check-card">
+              <input type="checkbox" [checked]="hasSpecification(facility)"
+                (change)="toggleSpecification(facility, $any($event.target).checked)" />
+              <span>{{ facility }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="wide option-panel">
+        <legend>Paid add-ons from landlord</legend>
+        <div class="addon-grid">
+          @for (addOn of addOnOptions; track addOn.name) {
+            <div class="addon-card">
+              <label class="check-card">
+                <input type="checkbox" [checked]="!!selectedAddOn(addOn.name)"
+                  (change)="toggleAddOn(addOn.name, $any($event.target).checked, addOn.charge)" />
+                <span>{{ addOn.name }}</span>
+              </label>
+              @if (selectedAddOn(addOn.name)) {
+                <input type="number" min="0" [name]="'addon' + addOn.name"
+                  [ngModel]="selectedAddOn(addOn.name)?.charge"
+                  (ngModelChange)="updateAddOnCharge(addOn.name, $event)" aria-label="Extra charge" />
+                <label class="upload-btn addon-upload">
+                  Add image
+                  <input type="file" accept="image/*" (change)="addAddOnImage(addOn.name, $any($event.target).files)" />
+                </label>
+                @if (selectedAddOn(addOn.name)?.image) {
+                  <button type="button" class="addon-image-preview" (click)="removeAddOnImage(addOn.name)">
+                    <img [src]="selectedAddOn(addOn.name)?.image" alt="Add-on preview" />
+                    <span>Remove image</span>
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+      </fieldset>
+
+      <label>
+        Nearest college, office, school or famous place
+        <input type="text" name="nearbyLandmark" [(ngModel)]="property.nearbyLandmark" required />
+      </label>
+
+      <label>
+        Distance from that place
+        <input type="text" name="landmarkDistance" [(ngModel)]="property.landmarkDistance" placeholder="Example: 1.2 km" required />
+      </label>
+
+      <fieldset class="wide option-panel compact-panel">
+        <legend>Food availability</legend>
+        <label class="toggle-row">
+          <input type="checkbox" name="foodAvailable" [(ngModel)]="property.foodAvailable" />
+          <span>Landlord can provide food</span>
+        </label>
+        @if (property.foodAvailable) {
+          <div class="check-grid">
+            @for (food of foodOptions; track food) {
+              <label class="check-card">
+                <input type="checkbox" [checked]="hasFoodOption(food)"
+                  (change)="toggleFoodOption(food, $any($event.target).checked)" />
+                <span>{{ food }}</span>
+              </label>
+            }
+          </div>
+        }
+      </fieldset>
+
+      <label class="wide">
+        Entry rule
+        <select name="entryRule" [(ngModel)]="property.entryRule">
+          <option>24 hour entry allowed</option>
+          <option>Late night entry allowed until 10 PM</option>
+          <option>Late night entry allowed until 11 PM</option>
+          <option>Late night entry allowed until 12 AM</option>
+          <option>No late night entry</option>
+        </select>
+      </label>
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button type="button" class="ready-btn" (click)="nextStep()">Next: Amenities →</button>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 3 — Module 2: Amenities
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 3) {
+      <!-- Category jump bar -->
+      <div class="wide category-jump-bar">
+        @for (cat of amenityCategories; track cat.label) {
+          <button type="button" class="jump-pill" (click)="jumpToCategory(cat.label)">
+            <span class="material-icons jump-icon">{{ cat.icon }}</span>
+            {{ cat.label }}
+          </button>
+        }
+      </div>
+
+      <!-- Amenity categories -->
+      @for (cat of amenityCategories; track cat.label) {
+        <fieldset class="wide option-panel amenity-panel" [id]="'cat-' + cat.label.replace(' ', '-')">
+          <legend>
+            <span class="material-icons legend-icon">{{ cat.icon }}</span>
+            {{ cat.label }}
+          </legend>
+          <div class="check-grid amenity-grid">
+            @for (item of cat.items; track item) {
+              <label class="check-card" [class.check-selected]="hasAmenity(item)">
+                <input type="checkbox" [checked]="hasAmenity(item)"
+                  (change)="toggleAmenity(item, $any($event.target).checked)" />
+                <span>{{ item }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+      }
+
+      <!-- Live summary -->
+      @if (selectedAmenitiesList.length) {
+        <div class="wide amenity-summary">
+          <p class="summary-title">Selected Amenities ({{ selectedAmenitiesList.length }})</p>
+          <div class="amenity-tags">
+            @for (a of selectedAmenitiesList; track a) {
+              <span class="amenity-tag">
+                ✓ {{ a }}
+                <button type="button" class="tag-remove" (click)="removeAmenity(a)" aria-label="Remove {{ a }}">×</button>
+              </span>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button type="button" class="ready-btn" (click)="nextStep()">Next: Property Rules →</button>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 4 — Module 3: Property Rules
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 4) {
+      <fieldset class="wide option-panel">
+        <legend>Property Rules</legend>
+        <p class="panel-hint">Select the rules that apply to your property. These will be shown on your listing and can be used as search filters by tenants.</p>
+        <div class="check-grid rules-grid">
+          @for (rule of allRules; track rule) {
+            <label class="check-card rule-card" [class.check-selected]="hasRule(rule)">
+              <input type="checkbox" [checked]="hasRule(rule)"
+                (change)="toggleRule(rule, $any($event.target).checked)" />
+              <span>{{ rule }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      @if (selectedRulesList.length) {
+        <div class="wide amenity-summary">
+          <p class="summary-title">Active Rules ({{ selectedRulesList.length }})</p>
+          <div class="amenity-tags">
+            @for (r of selectedRulesList; track r) {
+              <span class="amenity-tag rule-tag">{{ r }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button type="button" class="ready-btn" (click)="nextStep()">Next: Availability →</button>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 5 — Module 4: Availability Calendar
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 5) {
+      <div class="wide calendar-section">
+        <!-- Controls -->
+        <div class="cal-toolbar">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" (click)="prevCalendar()">&#8249;</button>
+            <span class="cal-title">{{ calendarTitle }}</span>
+            <button type="button" class="cal-nav-btn" (click)="nextCalendar()">&#8250;</button>
+          </div>
+          <div class="cal-view-toggle">
+            <button type="button" [class.view-active]="calendarView === 'month'" (click)="calendarView = 'month'">Month</button>
+            <button type="button" [class.view-active]="calendarView === 'week'"  (click)="calendarView = 'week'">Week</button>
+          </div>
+        </div>
+
+        <!-- Status picker + bulk mode -->
+        <div class="cal-status-bar">
+          <span class="cal-bar-label">Mark as:</span>
+          @for (s of blockStatuses; track s) {
+            <button
+              type="button"
+              class="status-pill"
+              [class.status-active]="selectedBlockStatus === s"
+              [style.--pill-color]="statusColors[s]"
+              (click)="selectedBlockStatus = s"
+            >{{ s }}</button>
+          }
+          <button type="button" class="bulk-toggle-btn" [class.bulk-active]="bulkSelectMode" (click)="bulkSelectMode = !bulkSelectMode">
+            <span class="material-icons" style="font-size:1rem">select_all</span>
+            Bulk select
+          </button>
+          @if (bulkSelectMode && bulkSelectedDates.size) {
+            <button type="button" class="apply-bulk-btn" (click)="applyBulkBlock()">Apply ({{ bulkSelectedDates.size }})</button>
+            <button type="button" class="secondary-btn small-btn" (click)="clearBulkSelection()">Cancel</button>
+          }
+        </div>
+
+        <!-- Month view -->
+        @if (calendarView === 'month') {
+          <div class="calendar-grid">
+            @for (d of dayNames; track d) {
+              <div class="cal-day-header">{{ d }}</div>
+            }
+            @for (day of calendarDays; track day.iso) {
+              <button
+                type="button"
+                class="cal-day"
+                [class.cal-out]="!day.inMonth"
+                [class.cal-blocked]="!!day.status"
+                [class.cal-recurring]="day.isRecurring"
+                [class.cal-bulk-selected]="bulkSelectedDates.has(day.iso)"
+                [style.--day-color]="dateStatusColor(day.status)"
+                (click)="toggleDateBlock(day.iso, day.inMonth)"
+                [disabled]="!day.inMonth"
+                [title]="day.status ?? ''"
+              >
+                {{ day.date.getDate() }}
+                @if (day.status) { <span class="day-dot"></span> }
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Week view -->
+        @if (calendarView === 'week') {
+          <div class="week-grid">
+            @for (day of calendarWeekDays; track day.iso) {
+              <button
+                type="button"
+                class="week-day"
+                [class.cal-blocked]="!!day.status"
+                [class.cal-recurring]="day.isRecurring"
+                [style.--day-color]="dateStatusColor(day.status)"
+                (click)="toggleDateBlock(day.iso, true)"
+                [title]="day.status ?? ''"
+              >
+                <span class="week-day-name">{{ dayNames[day.date.getDay()] }}</span>
+                <span class="week-day-num">{{ day.date.getDate() }}</span>
+                @if (day.status) {
+                  <span class="week-status-label">{{ day.status }}</span>
+                }
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          @for (s of blockStatuses; track s) {
+            <span class="legend-dot" [style.background]="statusColors[s]"></span>
+            <span class="legend-label">{{ s }}</span>
+          }
+          <span class="legend-dot legend-recurring"></span>
+          <span class="legend-label">Recurring</span>
+        </div>
+
+        <!-- Recurring blocks -->
+        <div class="recurring-section">
+          <p class="section-sub-title">Recurring Blocks</p>
+          <div class="recurring-form">
+            <select [(ngModel)]="recurringDay" name="recurDay" class="rec-select">
+              @for (d of dayNames; track d; let i = $index) {
+                <option [value]="i">Every {{ d }}</option>
+              }
+            </select>
+            <select [(ngModel)]="recurringStatus" name="recurStatus" class="rec-select">
+              @for (s of blockStatuses; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+            <button type="button" class="ready-btn small-btn" (click)="addRecurringBlock()">Add</button>
+          </div>
+
+          @if (recurringBlocks.length) {
+            <div class="recurring-list">
+              @for (r of recurringBlocks; track r.day) {
+                <span class="recurring-chip" [style.--chip-color]="statusColors[r.status]">
+                  Every {{ dayNames[r.day] }} — {{ r.status }}
+                  <button type="button" class="chip-remove" (click)="removeRecurring(r.day)">×</button>
+                </span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Blocked dates list -->
+        @if (blockedDates.length) {
+          <div class="blocked-dates-list">
+            <p class="section-sub-title">Blocked Dates ({{ blockedDates.length }})</p>
+            <div class="blocked-tags">
+              @for (b of blockedDates; track b.date) {
+                <span class="blocked-chip" [style.--chip-color]="statusColors[b.status]">
+                  {{ b.date }} — {{ b.status }}
+                  <button type="button" class="chip-remove"
+                    (click)="removeBlockedDate(b.date)">×</button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button type="button" class="ready-btn" (click)="nextStep()">Next: Pricing →</button>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 6 — Module 5: Dynamic Pricing
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 6) {
+      <fieldset class="wide option-panel pricing-panel">
+        <legend>Standard Pricing</legend>
+        <div class="pricing-grid">
+          <label class="price-field">
+            <span class="price-label">Weekday Price (₹/night)</span>
+            <div class="price-input-wrap">
+              <span class="price-prefix">₹</span>
+              <input type="number" name="weekdayPrice" [(ngModel)]="weekdayPrice" min="0" placeholder="{{ property.dailyPrice }}" />
+            </div>
+            <small>Mon – Fri</small>
+          </label>
+          <label class="price-field">
+            <span class="price-label">Weekend Price (₹/night)</span>
+            <div class="price-input-wrap">
+              <span class="price-prefix">₹</span>
+              <input type="number" name="weekendPrice" [(ngModel)]="weekendPrice" min="0" placeholder="{{ property.dailyPrice }}" />
+            </div>
+            <small>Sat – Sun</small>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="wide option-panel pricing-panel">
+        <legend>Seasonal Pricing</legend>
+        <div class="pricing-grid">
+          <label class="price-field">
+            <span class="price-label">Holiday Price (₹/night)</span>
+            <div class="price-input-wrap">
+              <span class="price-prefix">₹</span>
+              <input type="number" name="holidayPrice" [(ngModel)]="holidayPrice" min="0" />
+            </div>
+          </label>
+          <label class="price-field">
+            <span class="price-label">Festival Price (₹/night)</span>
+            <div class="price-input-wrap">
+              <span class="price-prefix">₹</span>
+              <input type="number" name="festivalPrice" [(ngModel)]="festivalPrice" min="0" />
+            </div>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="wide option-panel pricing-panel">
+        <legend>Special Event Pricing</legend>
+        <div class="event-add-row">
+          <input type="text" name="evLabel" [(ngModel)]="newEventLabel" placeholder="Event name (e.g. New Year, IPL Weekend)" class="event-label-input" />
+          <div class="price-input-wrap event-price">
+            <span class="price-prefix">₹</span>
+            <input type="number" name="evPrice" [(ngModel)]="newEventPrice" min="0" placeholder="Price" />
+          </div>
+          <button type="button" class="ready-btn small-btn" (click)="addSpecialEvent()">Add</button>
+        </div>
+        @if (specialEvents.length) {
+          <div class="event-list">
+            @for (ev of specialEvents; track ev.label; let i = $index) {
+              <div class="event-chip">
+                <span class="ev-label">{{ ev.label }}</span>
+                <span class="ev-price">₹{{ ev.price }}</span>
+                <button type="button" class="chip-remove" (click)="removeSpecialEvent(i)">×</button>
+              </div>
+            }
+          </div>
+        }
+      </fieldset>
+
+      <!-- Pricing preview -->
+      <div class="wide pricing-preview">
+        <p class="summary-title">Pricing Preview</p>
+        <div class="pricing-preview-grid">
+          <div class="preview-card">
+            <span class="preview-label">Weekday</span>
+            <span class="preview-val">₹{{ weekdayPrice || property.dailyPrice }}<small>/night</small></span>
+            <span class="preview-hint">Mon–Fri</span>
+          </div>
+          <div class="preview-card">
+            <span class="preview-label">Weekend</span>
+            <span class="preview-val">₹{{ weekendPrice || property.dailyPrice }}<small>/night</small></span>
+            <span class="preview-hint">Sat–Sun</span>
+          </div>
+          @if (holidayPrice) {
+            <div class="preview-card preview-highlight">
+              <span class="preview-label">Holiday</span>
+              <span class="preview-val">₹{{ holidayPrice }}<small>/night</small></span>
+            </div>
+          }
+          @if (festivalPrice) {
+            <div class="preview-card preview-highlight">
+              <span class="preview-label">Festival</span>
+              <span class="preview-val">₹{{ festivalPrice }}<small>/night</small></span>
+            </div>
+          }
+          @for (ev of specialEvents; track ev.label) {
+            <div class="preview-card preview-event">
+              <span class="preview-label">{{ ev.label }}</span>
+              <span class="preview-val">₹{{ ev.price }}<small>/night</small></span>
+            </div>
+          }
+          @if (projectedMonthlyRevenue) {
+            <div class="preview-card preview-revenue">
+              <span class="preview-label">Projected Monthly</span>
+              <span class="preview-val">₹{{ projectedMonthlyRevenue | number }}</span>
+              <span class="preview-hint">~22 weeknights + 8 weekend nights</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button type="button" class="ready-btn" (click)="nextStep()">Next: Check-In Setup →</button>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STEP 7 — Module 6: Self Check-In + Submit
+    ═══════════════════════════════════════════════════════════════════ -->
+    @if (currentStep === 7) {
+      <fieldset class="wide option-panel">
+        <legend>Self Check-In</legend>
+        <p class="panel-hint">If enabled, guests receive access codes only after booking is confirmed and payment is successful.</p>
+
+        <label class="toggle-row checkin-master-toggle">
+          <input type="checkbox" name="selfCheckIn" [(ngModel)]="selfCheckInEnabled" />
+          <span>Allow Self Check-In for this property</span>
+        </label>
+
+        @if (selfCheckInEnabled) {
+          <div class="checkin-codes-grid">
+            @for (code of checkInCodes; track code.type) {
+              <div class="checkin-code-card">
+                <div class="code-card-head">
+                  <span class="code-type-label">{{ code.label }}</span>
+                  <span class="security-badge">
+                    <span class="material-icons" style="font-size:0.85rem">lock</span>
+                    Hidden until confirmed
+                  </span>
+                </div>
+                <input
+                  type="password"
+                  [name]="'code_' + code.type"
+                  [(ngModel)]="code.code"
+                  placeholder="Enter code (optional)"
+                  autocomplete="new-password"
+                />
+                <p class="code-hint">Leave blank if not applicable.</p>
+              </div>
+            }
+          </div>
+
+          <div class="security-notice">
+            <span class="material-icons notice-icon">verified_user</span>
+            <div>
+              <strong>Security rules enforced automatically:</strong>
+              <ul>
+                <li>Codes remain hidden from guests until booking is confirmed.</li>
+                <li>Payment must be successful before codes are revealed.</li>
+                <li>Codes are never stored or transmitted in plain text in notifications.</li>
+              </ul>
+            </div>
+          </div>
+        }
+      </fieldset>
+
+      <!-- Final review summary -->
+      <div class="wide review-summary">
+        <p class="summary-title">Listing Summary</p>
+        <div class="review-grid">
+          <div class="review-item"><span>Title</span><strong>{{ property.title || '—' }}</strong></div>
+          <div class="review-item"><span>Location</span><strong>{{ property.location }}</strong></div>
+          <div class="review-item"><span>Type</span><strong>{{ property.propertyType }}</strong></div>
+          <div class="review-item"><span>Monthly Rent</span><strong>₹{{ property.price | number }}</strong></div>
+          <div class="review-item"><span>Daily Rent</span><strong>₹{{ property.dailyPrice | number }}</strong></div>
+          <div class="review-item"><span>Amenities</span><strong>{{ selectedAmenitiesList.length }} selected</strong></div>
+          <div class="review-item"><span>Rules</span><strong>{{ selectedRulesList.length }} selected</strong></div>
+          <div class="review-item"><span>Blocked Dates</span><strong>{{ blockedDates.length }}</strong></div>
+          <div class="review-item"><span>Self Check-In</span><strong>{{ selfCheckInEnabled ? 'Enabled' : 'Disabled' }}</strong></div>
+        </div>
+      </div>
+
+      <div class="approval-note">
+        <strong>Live listing</strong>
+        <span>After submit, this property appears instantly at the top of rentals for the selected location.</span>
+      </div>
+
+      <div class="form-actions wide">
+        <button type="button" class="secondary-btn" (click)="prevStep()">← Back</button>
+        <button
+          type="submit"
+          [class.ready-btn]="!isSubmitted"
+          [class.submitted-btn]="isSubmitted"
+          [disabled]="isSubmitting || isSubmitted"
+        >
+          {{ isSubmitted ? '✓ Submitted' : isSubmitting ? 'Submitting…' : 'Publish Live Listing' }}
+        </button>
+      </div>
+    }
+
+    <!-- ── Global messages ──────────────────────────────────────────────── -->
+    @if (imageError)    { <p class="error-msg wide">{{ imageError }}</p> }
+    @if (successMessage){ <p class="success-msg wide">{{ successMessage }}</p> }
+    @if (errorMessage)  { <p class="error-msg wide">{{ errorMessage }}</p> }
+
+  </form>
+</section>
